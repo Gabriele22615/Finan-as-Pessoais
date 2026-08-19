@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#2a78d6">
+<title>Minhas Finanças</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface:        #fcfcfb;
+    --page:           #f9f9f7;
+    --card:           #ffffff;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --border:         rgba(11,11,11,0.10);
+    --good:           #006300;
+    --critical:       #d03b3b;
+    --accent:         #2a78d6;
+    --c-moradia:      #2a78d6;
+    --c-contas:       #eb6834;
+    --c-alimentacao:  #1baf7a;
+    --c-transporte:   #eda100;
+    --c-saude:        #e87ba4;
+    --c-lazer:        #008300;
+    --c-educacao:     #4a3aa7;
+    --c-assinaturas:  #e34948;
+    --c-outros:       #898781;
+  }
+  :root[data-theme="dark"], :root:where(:not([data-theme="light"])) {
+    @media (prefers-color-scheme: dark) {
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface:        #1a1a19;
+    --page:           #0d0d0d;
+    --card:           #232322;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --border:         rgba(255,255,255,0.10);
+    --good:           #0ca30c;
+    --critical:       #e66767;
+    --accent:         #3987e5;
+    --c-moradia:      #3987e5;
+    --c-contas:       #d95926;
+    --c-alimentacao:  #199e70;
+    --c-transporte:   #c98500;
+    --c-saude:        #d55181;
+    --c-lazer:        #008300;
+    --c-educacao:     #9085e9;
+    --c-assinaturas:  #e66767;
+    --c-outros:       #898781;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface:        #1a1a19;
+      --page:           #0d0d0d;
+      --card:           #232322;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --border:         rgba(255,255,255,0.10);
+      --good:           #0ca30c;
+      --critical:       #e66767;
+      --accent:         #3987e5;
+      --c-moradia:      #3987e5;
+      --c-contas:       #d95926;
+      --c-alimentacao:  #199e70;
+      --c-transporte:   #c98500;
+      --c-saude:        #d55181;
+      --c-lazer:        #008300;
+      --c-educacao:     #9085e9;
+      --c-assinaturas:  #e66767;
+      --c-outros:       #898781;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body { padding-bottom: 84px; }
+  h1, h2, h3 { margin: 0 0 4px; font-weight: 600; }
+  p { margin: 0; }
+  button { font-family: inherit; }
+
+  header.app-header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px;
+  }
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .app-title { font-size: 19px; }
+  .theme-btn {
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    width: 36px; height: 36px; font-size: 16px; color: var(--text-primary);
+    cursor: pointer;
+  }
+  .month-nav {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+  }
+  .month-nav button {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    width: 34px; height: 34px; font-size: 16px; color: var(--text-primary); cursor: pointer;
+  }
+  .month-label { font-size: 15px; font-weight: 600; min-width: 150px; text-align: center; }
+
+  nav.tabs {
+    position: sticky; top: 92px; z-index: 19;
+    display: flex; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  nav.tabs button {
+    flex: 1; padding: 11px 6px; background: none; border: none;
+    color: var(--text-secondary); font-size: 13px; font-weight: 600;
+    border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap;
+  }
+  nav.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  main { padding: 16px; max-width: 640px; margin: 0 auto; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .cards-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer;
+  }
+  .legend li { cursor: pointer; }
+  .detail-total {
+    font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; margin-bottom: 12px;
+  }
+  .stat-card .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .stat-card .value { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat-card.saldo-good .value { color: var(--good); }
+  .stat-card.saldo-bad .value { color: var(--critical); }
+
+  section.card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; margin-bottom: 16px;
+  }
+  section.card h3 { font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 12px; }
+
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .donut {
+    width: 190px; height: 190px; border-radius: 50%; position: relative; flex-shrink: 0;
+  }
+  .donut-hole {
+    position: absolute; inset: 30px; border-radius: 50%; background: var(--card);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .donut-hole .total { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .donut-hole .total-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .legend { list-style: none; margin: 0; padding: 0; width: 100%; }
+  .legend li {
+    display: flex; align-items: center; gap: 10px; padding: 7px 0;
+    border-bottom: 1px solid var(--gridline); font-size: 13px;
+  }
+  .legend li:last-child { border-bottom: none; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+  .legend .name { flex: 1; color: var(--text-primary); }
+  .legend .pct { color: var(--text-muted); width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+  .legend .amt { font-weight: 600; width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
+  .empty-note { color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0; }
+
+  form.entry-form { display: flex; flex-direction: column; gap: 10px; }
+  .form-row { display: flex; gap: 10px; }
+  .form-row > * { flex: 1; }
+  label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-secondary); }
+  input, select {
+    font-family: inherit; font-size: 15px; padding: 9px 10px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); color: var(--text-primary);
+  }
+  .segmented { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .segmented button {
+    flex: 1; padding: 9px 4px; background: var(--surface); border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    border-right: 1px solid var(--border);
+  }
+  .segmented button:last-child { border-right: none; }
+  .segmented button.active { background: var(--accent); color: #fff; }
+  .btn-primary {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 11px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px;
+  }
+  .btn-secondary {
+    background: var(--surface); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .btn-danger { color: var(--critical); }
+
+  ul.tx-list { list-style: none; margin: 0; padding: 0; }
+  ul.tx-list li {
+    display: flex; align-items: center; gap: 10px; padding: 10px 0;
+    border-bottom: 1px solid var(--gridline);
+  }
+  ul.tx-list li:last-child { border-bottom: none; }
+  .tx-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .tx-info { flex: 1; min-width: 0; }
+  .tx-desc { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tx-meta { font-size: 12px; color: var(--text-muted); }
+  .tx-value { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tx-value.receita { color: var(--good); }
+  .tx-actions { display: flex; gap: 4px; }
+  .icon-btn {
+    background: none; border: none; color: var(--text-muted); font-size: 15px;
+    cursor: pointer; padding: 4px 6px;
+  }
+  .tx-info { cursor: pointer; }
+  .edit-banner {
+    display: none; align-items: center; justify-content: space-between;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;
+  }
+  .edit-banner.show { display: flex; }
+  .edit-banner button {
+    background: none; border: none; color: var(--accent); font-size: 12px;
+    font-weight: 600; cursor: pointer;
+  }
+
+  table.history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.history-table th, table.history-table td {
+    padding: 8px 6px; text-align: right; border-bottom: 1px solid var(--gridline);
+    font-variant-numeric: tabular-nums;
+  }
+  table.history-table th:first-child, table.history-table td:first-child { text-align: left; }
+  table.history-table th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  table.history-table td.saldo-good { color: var(--good); font-weight: 700; }
+  table.history-table td.saldo-bad { color: var(--critical); font-weight: 700; }
+
+  .help-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .help-text b { color: var(--text-primary); }
+  .backup-actions { display: flex; flex-direction: column; gap: 10px; }
+  input[type="file"] { display: none; }
+
+  .cat-form-row { display: flex; gap: 10px; align-items: flex-end; }
+  .cat-form-row label.field { flex: 1; }
+  input[type="color"] {
+    padding: 3px; width: 52px; height: 40px; cursor: pointer;
+  }
+
+  .saldo-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 16px; cursor: pointer;
+  }
+  .saldo-card .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .saldo-card .value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .saldo-card.saldo-good .value { color: var(--good); }
+  .saldo-card.saldo-bad .value { color: var(--critical); }
+
+  .preview-line { font-size: 13px; color: var(--text-secondary); margin-top: -2px; }
+  .preview-line b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  .progress-track {
+    height: 6px; border-radius: 3px; background: var(--gridline); overflow: hidden; margin-top: 4px;
+  }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+  .debt-status { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .debt-status.ativa { background: rgba(42,120,214,0.15); color: var(--accent); }
+  .debt-status.futura { background: var(--gridline); color: var(--text-muted); }
+  .debt-status.finalizada { background: rgba(12,163,12,0.15); color: var(--good); }
+
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: var(--text-primary); color: var(--page);
+    padding: 10px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 50;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-row">
+    <h1 class="app-title">💰 Minhas Finanças</h1>
+    <button class="theme-btn" id="themeBtn" title="Alternar tema">🌓</button>
+  </div>
+  <div class="month-nav">
+    <button id="prevMonth">‹</button>
+    <div class="month-label" id="monthLabel">agosto de 2026</div>
+    <button id="nextMonth">›</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-view="resumo" class="active">Resumo</button>
+  <button data-view="lancamentos">Lançamentos</button>
+  <button data-view="fixos">Gastos Fixos</button>
+  <button data-view="dividas">Dívidas</button>
+  <button data-view="investimentos">Investimentos</button>
+  <button data-view="categorias">Categorias</button>
+  <button data-view="backup">Backup</button>
+</nav>
+
+<main>
+
+  <!-- RESUMO -->
+  <section class="view active" id="view-resumo">
+    <div class="cards-grid">
+      <div class="stat-card" id="cardReceita" data-detail="receita"><div class="label">Receitas</div><div class="value" id="statReceita">R$ 0,00</div></div>
+      <div class="stat-card" id="cardFixos" data-detail="fixo"><div class="label">Gastos Fixos</div><div class="value" id="statFixos">R$ 0,00</div></div>
+      <div class="stat-card" id="cardVariaveis" data-detail="variavel"><div class="label">Gastos Variáveis</div><div class="value" id="statVariaveis">R$ 0,00</div></div>
+      <div class="stat-card" id="cardDividas" data-detail="dividas"><div class="label">Dívidas</div><div class="value" id="statDividas">R$ 0,00</div></div>
+    </div>
+    <div class="saldo-card" id="cardSaldo"><div class="label">Saldo do mês</div><div class="value" id="statSaldo">R$ 0,00</div></div>
+
+    <section class="card" id="detailPanel" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <h3 id="detailTitle" style="margin:0;">Detalhe</h3>
+        <button class="icon-btn" id="detailClose" title="Fechar">✕</button>
+      </div>
+      <div class="detail-total" id="detailTotal"></div>
+      <ul class="tx-list" id="detailList"></ul>
+      <p class="empty-note" id="detailEmpty" style="display:none;">Nada lançado aqui neste mês.</p>
+    </section>
+
+    <section class="card">
+      <h3>Gastos por categoria</h3>
+      <p class="help-text" style="margin-bottom:10px;">Toque numa categoria para ver os lançamentos.</p>
+      <div id="chartArea"></div>
+    </section>
+
+    <section class="card">
+      <h3>Últimos 6 meses</h3>
+      <div style="overflow-x:auto;">
+        <table class="history-table" id="historyTable">
+          <thead><tr><th>Mês</th><th>Receita</th><th>Fixo</th><th>Variável</th><th>Dívida</th><th>Saldo</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <!-- LANÇAMENTOS -->
+  <section class="view" id="view-lancamentos">
+    <section class="card">
+      <h3>Novo lançamento</h3>
+      <div class="edit-banner" id="txEditBanner">
+        <span>Editando lançamento</span>
+        <button type="button" id="txCancelEdit">Cancelar</button>
+      </div>
+      <form class="entry-form" id="txForm">
+        <div class="segmented" id="txTypeSeg">
+          <button type="button" data-type="variavel" class="active">Gasto variável</button>
+          <button type="button" data-type="receita">Receita</button>
+        </div>
+        <label class="field">Descrição
+          <input type="text" id="txDesc" placeholder="Ex: Supermercado, Salário..." required>
+        </label>
+        <div class="form-row">
+          <label class="field">Valor (R$)
+            <input type="text" id="txValor" inputmode="decimal" placeholder="0,00" required>
+          </label>
+          <label class="field">Data
+            <input type="date" id="txData" required>
+          </label>
+        </div>
+        <label class="field" id="txCategoriaWrap">Categoria
+          <select id="txCategoria"></select>
+        </label>
+        <button type="submit" class="btn-primary" id="txSubmitBtn">Adicionar</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>Lançamentos do mês</h3>
+      <p class="help-text" style="margin-bottom:10px;">Toque em um lançamento para editar.</p>
+      <ul class="tx-list" id="txList"></ul>
+      <p class="empty-note" id="txEmpty" style="display:none;">Nenhum lançamento neste mês ainda.</p>
+    </section>
+  </section>
+
+  <!-- FIXOS -->
+  <section class="view" id="view-fixos">
+    <section class="card">
+      <h3>Novo gasto fixo</h3>
+      <p class="help-text" style="margin-bottom:10px;">Gastos fixos (aluguel, financiamento, assinaturas) são lançados uma vez e repetem automaticamente todo mês, a partir do mês escolhido.</p>
+      <div class="edit-banner" id="fxEditBanner">
+        <span>Editando gasto fixo</span>
+        <button type="button" id="fxCancelEdit">Cancelar</button>
+      </div>
+      <form class="entry-form" id="fixedForm">
+        <label class="field">Descrição
+          <input type="text" id="fxDesc" placeholder="Ex: Aluguel, Financiamento do carro..." required>
+        </label>
+        <div class="form-row">
+          <label class="field">Valor (R$)
+            <input type="text" id="fxValor" inputmode="decimal" placeholder="0,00" required>
+          </label>
+          <label class="field">A partir de
+            <input type="month" id="fxInicio" required>
+          </label>
+        </div>
+        <label class="field">Categoria
+          <select id="fxCategoria"></select>
+        </label>
+        <button type="submit" class="btn-primary" id="fxSubmitBtn">Adicionar gasto fixo</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>Gastos fixos cadastrados</h3>
+      <p class="help-text" style="margin-bottom:10px;">Toque em um item para editar.</p>
+      <ul class="tx-list" id="fixedList"></ul>
+      <p class="empty-note" id="fixedEmpty" style="display:none;">Nenhum gasto fixo cadastrado.</p>
+    </section>
+  </section>
+
+  <!-- DÍVIDAS -->
+  <section class="view" id="view-dividas">
+    <section class="card">
+      <h3>Nova dívida parcelada</h3>
+      <p class="help-text" style="margin-bottom:10px;">Compras parceladas, empréstimos ou financiamentos com início e fim definidos. O valor da parcela é calculado automaticamente.</p>
+      <div class="edit-banner" id="debtEditBanner">
+        <span>Editando dívida</span>
+        <button type="button" id="debtCancelEdit">Cancelar</button>
+      </div>
+      <form class="entry-form" id="debtForm">
+        <label class="field">Descrição
+          <input type="text" id="debtDesc" placeholder="Ex: Sofá, Empréstimo, Financiamento..." required>
+        </label>
+        <label class="field">Para quem devendo (opcional)
+          <input type="text" id="debtCredor" placeholder="Ex: Nubank, Banco X...">
+        </label>
+        <div class="form-row">
+          <label class="field">Valor total (R$)
+            <input type="text" id="debtValorTotal" inputmode="decimal" placeholder="0,00" required>
+          </label>
+          <label class="field">Nº de parcelas
+            <input type="number" id="debtParcelas" min="1" step="1" placeholder="12" required>
+          </label>
+        </div>
+        <label class="field">Mês da 1ª parcela
+          <input type="month" id="debtInicio" required>
+        </label>
+        <p class="preview-line" id="debtPreview"></p>
+        <button type="submit" class="btn-primary" id="debtSubmitBtn">Adicionar dívida</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>Dívidas cadastradas</h3>
+      <p class="help-text" style="margin-bottom:10px;">Toque em uma dívida para editar. O progresso mostrado é em relação ao mês selecionado no topo do app.</p>
+      <ul class="tx-list" id="debtList"></ul>
+      <p class="empty-note" id="debtEmpty" style="display:none;">Nenhuma dívida cadastrada.</p>
+    </section>
+  </section>
+
+  <!-- INVESTIMENTOS -->
+  <section class="view" id="view-investimentos">
+    <section class="card">
+      <h3>Novo aporte</h3>
+      <div class="edit-banner" id="investEditBanner">
+        <span>Editando aporte</span>
+        <button type="button" id="investCancelEdit">Cancelar</button>
+      </div>
+      <form class="entry-form" id="investForm">
+        <label class="field">Produto financeiro
+          <input type="text" id="investProduto" placeholder="Ex: Tesouro Selic 2029, PETR4..." required>
+        </label>
+        <label class="field">Corretora (opcional)
+          <input type="text" id="investCorretora" placeholder="Ex: XP, Rico, Nubank...">
+        </label>
+        <div class="form-row">
+          <label class="field">Tipo
+            <select id="investTipo"></select>
+          </label>
+          <label class="field">Valor do aporte (R$)
+            <input type="text" id="investValor" inputmode="decimal" placeholder="0,00" required>
+          </label>
+        </div>
+        <label class="field">Mês do aporte
+          <input type="month" id="investMes" required>
+        </label>
+        <button type="submit" class="btn-primary" id="investSubmitBtn">Adicionar aporte</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>Total investido</h3>
+      <div class="detail-total" id="investTotal">R$ 0,00</div>
+      <ul class="legend" id="investBreakdown"></ul>
+      <p class="empty-note" id="investBreakdownEmpty" style="display:none;">Nenhum aporte registrado ainda.</p>
+    </section>
+
+    <section class="card">
+      <h3>Aportes</h3>
+      <p class="help-text" style="margin-bottom:10px;">Toque em um aporte para editar. Esta aba mostra o histórico completo, independente do mês selecionado no topo.</p>
+      <ul class="tx-list" id="investList"></ul>
+      <p class="empty-note" id="investEmpty" style="display:none;">Nenhum aporte cadastrado.</p>
+    </section>
+  </section>
+
+  <!-- CATEGORIAS -->
+  <section class="view" id="view-categorias">
+    <section class="card">
+      <h3>Nova categoria</h3>
+      <p class="help-text" style="margin-bottom:10px;">Crie categorias extras além das já existentes, com a cor que preferir.</p>
+      <form class="entry-form" id="catForm">
+        <div class="cat-form-row">
+          <label class="field">Nome
+            <input type="text" id="catLabel" placeholder="Ex: Pets, Viagens..." required>
+          </label>
+          <label class="field" style="flex:none;">Cor
+            <input type="color" id="catColor" value="#6b5b95">
+          </label>
+        </div>
+        <button type="submit" class="btn-primary">Adicionar categoria</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>Suas categorias</h3>
+      <ul class="tx-list" id="customCatList"></ul>
+      <p class="empty-note" id="customCatEmpty" style="display:none;">Você ainda não criou categorias extras.</p>
+    </section>
+
+    <section class="card">
+      <h3>Categorias padrão</h3>
+      <ul class="tx-list" id="defaultCatList"></ul>
+    </section>
+  </section>
+
+  <!-- BACKUP -->
+  <section class="view" id="view-backup">
+    <section class="card">
+      <h3>Seus dados</h3>
+      <p class="help-text">Por padrão, tudo é salvo <b>somente neste navegador/aparelho</b>. Para ter os mesmos dados no celular e no computador, configure a sincronização abaixo. Mesmo sincronizando, faça backups de vez em quando.</p>
+    </section>
+
+    <section class="card">
+      <h3>Sincronização entre aparelhos</h3>
+      <p class="help-text" style="margin-bottom:10px;">
+        Conecta o app a uma planilha do Google (via um script seu, gratuito). Assim, o que você lançar no celular aparece no computador e vice-versa.
+        <b>Peça pro Claude o passo a passo de configuração</b> caso ainda não tenha feito.
+      </p>
+      <div id="syncStatus" class="help-text" style="margin-bottom:10px;"></div>
+      <form class="entry-form" id="syncForm">
+        <label class="field">URL do script (termina em /exec)
+          <input type="text" id="syncUrl" placeholder="https://script.google.com/macros/s/.../exec">
+        </label>
+        <label class="field">Senha secreta definida no script
+          <input type="text" id="syncSecret" placeholder="Sua senha">
+        </label>
+        <button type="submit" class="btn-primary">Salvar e sincronizar</button>
+      </form>
+      <div class="backup-actions" style="margin-top:10px;">
+        <button class="btn-secondary" id="syncNowBtn">🔄 Sincronizar agora</button>
+        <button class="btn-secondary btn-danger" id="syncOffBtn">Desligar sincronização</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Backup manual</h3>
+      <div class="backup-actions">
+        <button class="btn-secondary" id="exportBtn">⬇️ Exportar backup (.json)</button>
+        <button class="btn-secondary" id="importBtn">⬆️ Importar backup (.json)</button>
+        <input type="file" id="importFile" accept="application/json">
+        <button class="btn-secondary btn-danger" id="resetBtn">🗑️ Apagar todos os dados</button>
+      </div>
+    </section>
+    <section class="card">
+      <h3>Como usar no celular</h3>
+      <p class="help-text">
+        Abra este arquivo no navegador do celular e use o menu do navegador para
+        <b>"Adicionar à tela inicial"</b> — assim você terá um ícone como um app,
+        sem precisar abrir o navegador manualmente. Os dados continuam salvos
+        localmente mesmo assim.
+      </p>
+    </section>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var DEFAULT_CATEGORIES = [
+    { id: "moradia",     label: "Moradia" },
+    { id: "contas",      label: "Contas (água, luz, internet)" },
+    { id: "alimentacao", label: "Alimentação" },
+    { id: "transporte",  label: "Transporte" },
+    { id: "saude",       label: "Saúde" },
+    { id: "lazer",       label: "Lazer" },
+    { id: "educacao",    label: "Educação" },
+    { id: "assinaturas", label: "Assinaturas" },
+    { id: "outros",      label: "Outros" }
+  ];
+  var DEFAULT_CAT_IDS = DEFAULT_CATEGORIES.map(function (c) { return c.id; });
+  var EXTRA_COLOR_POOL = ["#6b5b95", "#b5651d", "#2f6f6f", "#9b2d54", "#4c6b1f", "#8e5a2f", "#0d7377", "#a4243b"];
+
+  function getAllCategories() {
+    return DEFAULT_CATEGORIES.concat(Array.isArray(state.categories) ? state.categories : []);
+  }
+  function findCategory(id) {
+    return getAllCategories().find(function (c) { return c.id === id; });
+  }
+  function catLabel(id) {
+    var c = findCategory(id);
+    return c ? c.label : "Outros";
+  }
+  function categoryColor(id) {
+    if (DEFAULT_CAT_IDS.indexOf(id) !== -1) return "var(--c-" + id + ")";
+    var c = findCategory(id);
+    return (c && c.color) ? c.color : "var(--c-outros)";
+  }
+  function nextSuggestedColor() {
+    var n = (state.categories && state.categories.length) || 0;
+    return EXTRA_COLOR_POOL[n % EXTRA_COLOR_POOL.length];
+  }
+  var INVEST_TYPES = [
+    { id: "renda-fixa",   label: "Renda Fixa (CDB, LCI, LCA)", colorVar: "--c-moradia" },
+    { id: "tesouro",      label: "Tesouro Direto",             colorVar: "--c-contas" },
+    { id: "acoes",        label: "Ações",                      colorVar: "--c-alimentacao" },
+    { id: "fii",          label: "Fundos Imobiliários (FIIs)", colorVar: "--c-transporte" },
+    { id: "fundos",       label: "Fundos de Investimento",     colorVar: "--c-saude" },
+    { id: "cripto",       label: "Criptomoedas",                colorVar: "--c-lazer" },
+    { id: "previdencia",  label: "Previdência Privada",         colorVar: "--c-educacao" },
+    { id: "outros-inv",   label: "Outros",                      colorVar: "--c-outros" }
+  ];
+  function investLabel(id) {
+    var t = INVEST_TYPES.find(function (x) { return x.id === id; });
+    return t ? t.label : "Outros";
+  }
+  function investColor(id) {
+    var t = INVEST_TYPES.find(function (x) { return x.id === id; });
+    return "var(" + (t ? t.colorVar : "--c-outros") + ")";
+  }
+
+  function slugify(label) {
+    var s = label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    return s || "categoria";
+  }
+
+  var STORAGE_KEY = "financas_pessoais_v1";
+  var THEME_KEY = "financas_pessoais_theme";
+  var DEFAULT_DATA = {"transactions": [{"id": "ca1622fae9", "tipo": "receita", "descricao": "Empresa Heloisa", "valor": 200, "data": "2026-01-01", "categoria": null}, {"id": "2eed3bfbae", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-01-05", "categoria": null}, {"id": "4b309d3eab", "tipo": "receita", "descricao": "Reembolso brenda", "valor": 42, "data": "2026-01-04", "categoria": null}, {"id": "06033ae8ea", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-01-07", "categoria": null}, {"id": "090e1b221c", "tipo": "receita", "descricao": "Empresa Priscila", "valor": 300, "data": "2026-01-13", "categoria": null}, {"id": "adba564827", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-01-13", "categoria": null}, {"id": "ed506114ff", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 178, "data": "2026-01-15", "categoria": null}, {"id": "fe246b0b7b", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-01-19", "categoria": null}, {"id": "5440784b17", "tipo": "receita", "descricao": "Empresa Vicente", "valor": 150, "data": "2026-01-19", "categoria": null}, {"id": "6aac44cc93", "tipo": "receita", "descricao": "Reembolso Silvana", "valor": 63.59, "data": "2026-01-16", "categoria": null}, {"id": "6d867ac56e", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-01-16", "categoria": null}, {"id": "3a53e51053", "tipo": "receita", "descricao": "Empresa Nobre", "valor": 350, "data": "2026-01-20", "categoria": null}, {"id": "0c38eea8f8", "tipo": "receita", "descricao": "Empresa Aida", "valor": 250, "data": "2026-01-20", "categoria": null}, {"id": "2d3efe742f", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-01-26", "categoria": null}, {"id": "c625ee4741", "tipo": "receita", "descricao": "Empresa Rayanne", "valor": 300, "data": "2026-01-26", "categoria": null}, {"id": "390f205366", "tipo": "receita", "descricao": "Reembolso Kamila", "valor": 246, "data": "2026-01-30", "categoria": null}, {"id": "459515ab6e", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-01-02", "categoria": null}, {"id": "1121ea15c3", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-02-28", "categoria": null}, {"id": "529e6f2be9", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-01-02", "categoria": null}, {"id": "b93d59c10b", "tipo": "receita", "descricao": "Salário", "valor": 8100, "data": "2026-01-02", "categoria": null}, {"id": "50d7fe5c7a", "tipo": "receita", "descricao": "Empresa Gustavo", "valor": 300, "data": "2026-01-03", "categoria": null}, {"id": "b248179bf9", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-02-04", "categoria": null}, {"id": "3fa9513b0c", "tipo": "receita", "descricao": "Reembolso mãe", "valor": 95.26, "data": "2026-01-04", "categoria": null}, {"id": "ad447d2698", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 178, "data": "2026-02-05", "categoria": null}, {"id": "84768d16bb", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-02-09", "categoria": null}, {"id": "a602c6f403", "tipo": "receita", "descricao": "Reembolso tia Eli", "valor": 15, "data": "2026-02-06", "categoria": null}, {"id": "583e3ed1c0", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-02-23", "categoria": null}, {"id": "db63bf5436", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-02-16", "categoria": null}, {"id": "c1c4b42036", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-02-23", "categoria": null}, {"id": "595aab0312", "tipo": "receita", "descricao": "Empresa Nobre", "valor": 350, "data": "2026-02-23", "categoria": null}, {"id": "04c094552f", "tipo": "receita", "descricao": "Empresa Vicente", "valor": 350, "data": "2026-02-13", "categoria": null}, {"id": "b476cb31f2", "tipo": "receita", "descricao": "Empresa Aida", "valor": 250, "data": "2026-02-24", "categoria": null}, {"id": "10c09416e6", "tipo": "receita", "descricao": "Empresa Gustavo", "valor": 300, "data": "2026-02-25", "categoria": null}, {"id": "27296a8241", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-02-02", "categoria": null}, {"id": "168f57c3c7", "tipo": "receita", "descricao": "Empresa Heloísa", "valor": 200, "data": "2026-02-26", "categoria": null}, {"id": "11659f5525", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-03-02", "categoria": null}, {"id": "ea2b7d74de", "tipo": "receita", "descricao": "Salário", "valor": 8100, "data": "2026-02-02", "categoria": null}, {"id": "f1fe09a164", "tipo": "receita", "descricao": "MEI Leonardo", "valor": 50, "data": "2026-02-26", "categoria": null}, {"id": "870b5fcd95", "tipo": "receita", "descricao": "Empresa Rayanne", "valor": 300, "data": "2026-02-25", "categoria": null}, {"id": "38854ebd49", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-03-10", "categoria": null}, {"id": "254132ea6e", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-03-09", "categoria": null}, {"id": "e4aebc65cf", "tipo": "receita", "descricao": "Reembolso Silvana", "valor": 15, "data": "2026-03-13", "categoria": null}, {"id": "828fb064a0", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 178, "data": "2026-03-13", "categoria": null}, {"id": "b2aa142c1b", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-03-16", "categoria": null}, {"id": "8c58755320", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-03-16", "categoria": null}, {"id": "86015cce94", "tipo": "receita", "descricao": "Empresa Priscila", "valor": 450, "data": "2026-02-17", "categoria": null}, {"id": "a6f6131ddd", "tipo": "receita", "descricao": "Empresa Priscila", "valor": 450, "data": "2026-03-17", "categoria": null}, {"id": "43b43ab352", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-03-18", "categoria": null}, {"id": "36c5c0b507", "tipo": "receita", "descricao": "Reembolso Mercado", "valor": 19.16, "data": "2026-03-18", "categoria": null}, {"id": "925253d886", "tipo": "receita", "descricao": "Empresa Gustavo", "valor": 300, "data": "2026-03-19", "categoria": null}, {"id": "3863658d8d", "tipo": "receita", "descricao": "Empresa Aida", "valor": 250, "data": "2026-03-23", "categoria": null}, {"id": "80d3338e48", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-03-23", "categoria": null}, {"id": "e1ec52b00c", "tipo": "receita", "descricao": "IR Marcia", "valor": 120, "data": "2026-03-23", "categoria": null}, {"id": "3024e54795", "tipo": "receita", "descricao": "Empresa Cristina", "valor": 200, "data": "2026-03-25", "categoria": null}, {"id": "0615788eb1", "tipo": "receita", "descricao": "Empresa Rayanne", "valor": 300, "data": "2026-03-25", "categoria": null}, {"id": "9c92a23465", "tipo": "receita", "descricao": "Empresa Nobre", "valor": 350, "data": "2026-03-31", "categoria": null}, {"id": "6c74719df8", "tipo": "receita", "descricao": "Empres Heloísa", "valor": 200, "data": "2026-03-27", "categoria": null}, {"id": "83d8dfa8dc", "tipo": "receita", "descricao": "Empresa Edmilson", "valor": 300, "data": "2026-03-31", "categoria": null}, {"id": "5345bd8139", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-04-30", "categoria": null}, {"id": "45821c8b78", "tipo": "receita", "descricao": "Bingo", "valor": 140, "data": "2026-04-05", "categoria": null}, {"id": "397dc12572", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-03-01", "categoria": null}, {"id": "977a92dc04", "tipo": "receita", "descricao": "Salário", "valor": 8100, "data": "2026-03-01", "categoria": null}, {"id": "ba4a55c2f0", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-04-06", "categoria": null}, {"id": "b506f2e44a", "tipo": "receita", "descricao": "Reembolso Silvana", "valor": 227.49, "data": "2026-04-06", "categoria": null}, {"id": "4562475009", "tipo": "receita", "descricao": "Imposto de renda Martins", "valor": 120, "data": "2026-04-06", "categoria": null}, {"id": "324394616f", "tipo": "receita", "descricao": "Imposto de renda Léo", "valor": 100, "data": "2026-04-06", "categoria": null}, {"id": "a8edac06cb", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 200, "data": "2026-04-07", "categoria": null}, {"id": "0b47f165c2", "tipo": "receita", "descricao": "Reembolso Silvana", "valor": 214, "data": "2026-04-09", "categoria": null}, {"id": "217265ac90", "tipo": "receita", "descricao": "Reembolso Andrea", "valor": 214, "data": "2026-04-09", "categoria": null}, {"id": "b950f67128", "tipo": "receita", "descricao": "Diária", "valor": 600, "data": "2026-04-12", "categoria": null}, {"id": "1f8cf02485", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-04-13", "categoria": null}, {"id": "11ecd6c8c2", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-04-15", "categoria": null}, {"id": "9bc8b542ad", "tipo": "receita", "descricao": "Empresa Gustavo", "valor": 700, "data": "2026-04-17", "categoria": null}, {"id": "0936fed162", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-04-21", "categoria": null}, {"id": "f68c595e47", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-04-20", "categoria": null}, {"id": "64444b79b4", "tipo": "receita", "descricao": "Diária", "valor": 600, "data": "2026-04-18", "categoria": null}, {"id": "2bcf92cb29", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-04-27", "categoria": null}, {"id": "d2b8fa711c", "tipo": "receita", "descricao": "diária", "valor": 600, "data": "2026-04-25", "categoria": null}, {"id": "546c627040", "tipo": "receita", "descricao": "Empresa Rayanne", "valor": 300, "data": "2026-04-27", "categoria": null}, {"id": "a53ec8fc8c", "tipo": "receita", "descricao": "Empresa Heloísa", "valor": 200, "data": "2026-04-27", "categoria": null}, {"id": "417adb00f2", "tipo": "receita", "descricao": "MEI Ludmilla", "valor": 50, "data": "2026-04-23", "categoria": null}, {"id": "91241b36a5", "tipo": "receita", "descricao": "Empresa Aida", "valor": 250, "data": "2026-04-23", "categoria": null}, {"id": "0982b50297", "tipo": "receita", "descricao": "Empresa Edimilson", "valor": 300, "data": "2026-04-29", "categoria": null}, {"id": "8f4f189ec3", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-05-30", "categoria": null}, {"id": "0a1501cb3a", "tipo": "receita", "descricao": "Salário", "valor": 9100, "data": "2026-04-30", "categoria": null}, {"id": "d392783107", "tipo": "receita", "descricao": "Diária", "valor": 600, "data": "2026-05-03", "categoria": null}, {"id": "36ad1c102e", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-04-04", "categoria": null}, {"id": "a37fbe596e", "tipo": "receita", "descricao": "seu zé", "valor": 200, "data": "2026-05-04", "categoria": null}, {"id": "2771bf8813", "tipo": "receita", "descricao": "IR Aida", "valor": 100, "data": "2026-05-04", "categoria": null}, {"id": "5aa7cfbae1", "tipo": "receita", "descricao": "Empresa Priscila", "valor": 450, "data": "2026-04-06", "categoria": null}, {"id": "642a2c31ca", "tipo": "receita", "descricao": "Empresa Nobre", "valor": 350, "data": "2026-04-07", "categoria": null}, {"id": "ae31cc6817", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 200, "data": "2026-05-07", "categoria": null}, {"id": "e42dcb2a1a", "tipo": "receita", "descricao": "MEI Maria", "valor": 50, "data": "2026-05-07", "categoria": null}, {"id": "0e3576700d", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-05-11", "categoria": null}, {"id": "49427abb62", "tipo": "receita", "descricao": "IR Igor", "valor": 200, "data": "2026-05-11", "categoria": null}, {"id": "aa53732bfb", "tipo": "receita", "descricao": "Empresa Gordinho", "valor": 300, "data": "2026-05-11", "categoria": null}, {"id": "0658348440", "tipo": "receita", "descricao": "Reembolso Isabele", "valor": 300, "data": "2026-05-12", "categoria": null}, {"id": "a1bfee4358", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-05-20", "categoria": null}, {"id": "ff6c4fde9a", "tipo": "receita", "descricao": "IR Tia Eli", "valor": 80, "data": "2026-05-18", "categoria": null}, {"id": "79eba1cda9", "tipo": "receita", "descricao": "IR Lila", "valor": 60, "data": "2026-05-18", "categoria": null}, {"id": "820411dbbc", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-05-16", "categoria": null}, {"id": "cfdbc248ef", "tipo": "receita", "descricao": "Empresa Aida", "valor": 250, "data": "2026-05-21", "categoria": null}, {"id": "38240668ec", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-05-25", "categoria": null}, {"id": "521442ff34", "tipo": "receita", "descricao": "Reembolso Garrafas", "valor": 149, "data": "2026-05-24", "categoria": null}, {"id": "1a13dccf3d", "tipo": "receita", "descricao": "Empresa Rayanne", "valor": 300, "data": "2026-05-26", "categoria": null}, {"id": "fdff8b0e24", "tipo": "receita", "descricao": "IR Cidianne", "valor": 80, "data": "2026-05-27", "categoria": null}, {"id": "417f5014d5", "tipo": "receita", "descricao": "Empresa Edimilson", "valor": 300, "data": "2026-05-28", "categoria": null}, {"id": "a122c991cd", "tipo": "receita", "descricao": "MEI GÊ", "valor": 50, "data": "2026-05-29", "categoria": null}, {"id": "6540b9fab7", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-06-01", "categoria": null}, {"id": "999ee3f2ee", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-05-01", "categoria": null}, {"id": "fab78cf390", "tipo": "receita", "descricao": "Empresa Heloísa", "valor": 200, "data": "2026-05-01", "categoria": null}, {"id": "6e4e09eed8", "tipo": "receita", "descricao": "Salário", "valor": 9100, "data": "2026-05-01", "categoria": null}, {"id": "3853d71e49", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-06-01", "categoria": null}, {"id": "166f061361", "tipo": "receita", "descricao": "IR Guilherme", "valor": 80, "data": "2026-06-03", "categoria": null}, {"id": "2ed85b10ae", "tipo": "receita", "descricao": "Reembolo vitor mestrado", "valor": 120, "data": "2026-05-03", "categoria": null}, {"id": "897d580f59", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 200, "data": "2026-06-08", "categoria": null}, {"id": "37fea223ea", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-06-08", "categoria": null}, {"id": "038b20ffeb", "tipo": "receita", "descricao": "Empresa kamila", "valor": 250, "data": "2026-06-11", "categoria": null}, {"id": "cde92c6cfb", "tipo": "receita", "descricao": "Empresa Alice", "valor": 300, "data": "2026-06-10", "categoria": null}, {"id": "8c0536a2d2", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-06-15", "categoria": null}, {"id": "4461a11b5f", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-06-15", "categoria": null}, {"id": "4a8a1c59e2", "tipo": "receita", "descricao": "Bolão", "valor": 115, "data": "2026-06-15", "categoria": null}, {"id": "7938f885fb", "tipo": "receita", "descricao": "IR Lucas", "valor": 150, "data": "2026-06-12", "categoria": null}, {"id": "e2be586aa7", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-06-22", "categoria": null}, {"id": "08dd11d353", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-06-22", "categoria": null}, {"id": "6f6d5c027b", "tipo": "receita", "descricao": "Empresa Gustavo", "valor": 350, "data": "2026-06-17", "categoria": null}, {"id": "d2d1f114ad", "tipo": "receita", "descricao": "IR Sintia", "valor": 150, "data": "2026-06-22", "categoria": null}, {"id": "cb280112e6", "tipo": "receita", "descricao": "Empresa Priscila", "valor": 800, "data": "2026-06-26", "categoria": null}, {"id": "ee09924699", "tipo": "receita", "descricao": "Empresa Edimilson", "valor": 300, "data": "2026-06-26", "categoria": null}, {"id": "5a5aa203b3", "tipo": "receita", "descricao": "Empresa Rayanne", "valor": 300, "data": "2026-06-25", "categoria": null}, {"id": "2ddbc37ef9", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-06-29", "categoria": null}, {"id": "9e40b51745", "tipo": "receita", "descricao": "Empresa Nobre", "valor": 700, "data": "2026-06-01", "categoria": null}, {"id": "b024436ce5", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-06-01", "categoria": null}, {"id": "b5c4b5610c", "tipo": "receita", "descricao": "Salário", "valor": 9100, "data": "2026-06-01", "categoria": null}, {"id": "45ee925538", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-07-01", "categoria": null}, {"id": "94a399c484", "tipo": "receita", "descricao": "Empresa Aida", "valor": 250, "data": "2026-06-25", "categoria": null}, {"id": "88d7802141", "tipo": "receita", "descricao": "Reembolso simpsons", "valor": 54, "data": "2026-07-29", "categoria": null}, {"id": "0e76e8699f", "tipo": "receita", "descricao": "Reembolso Silvana Almoço", "valor": 60, "data": "2026-07-03", "categoria": null}, {"id": "31af014ae5", "tipo": "receita", "descricao": "reembolso joias", "valor": 850, "data": "2026-06-30", "categoria": null}, {"id": "5a9dfe0ae4", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-07-06", "categoria": null}, {"id": "29261ef3ce", "tipo": "receita", "descricao": "Empresa Edimilson", "valor": 300, "data": "2026-07-06", "categoria": null}, {"id": "b0f0f996db", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 200, "data": "2026-07-07", "categoria": null}, {"id": "b541f9ad9a", "tipo": "receita", "descricao": "Empresa Alice", "valor": 300, "data": "2026-07-09", "categoria": null}, {"id": "4a3bb283d9", "tipo": "receita", "descricao": "Reembolso poliana", "valor": 496.06, "data": "2026-07-10", "categoria": null}, {"id": "a204eabf31", "tipo": "receita", "descricao": "Aniversário", "valor": 300, "data": "2026-07-13", "categoria": null}, {"id": "3e69c0bef3", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-07-14", "categoria": null}, {"id": "a7c63c0cde", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-07-15", "categoria": null}, {"id": "38951c43fd", "tipo": "receita", "descricao": "Empresa Matheus", "valor": 350, "data": "2026-07-20", "categoria": null}, {"id": "0b30a4b19a", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-07-20", "categoria": null}, {"id": "96ee8a9367", "tipo": "receita", "descricao": "Empresa Victoria", "valor": 300, "data": "2026-07-13", "categoria": null}, {"id": "8cba363e8d", "tipo": "receita", "descricao": "Empresa Mel", "valor": 350, "data": "2026-07-20", "categoria": null}, {"id": "ea91307725", "tipo": "receita", "descricao": "Empresa Priscila", "valor": 450, "data": "2026-07-20", "categoria": null}, {"id": "5409c2eb67", "tipo": "receita", "descricao": "Empresa Gustavo", "valor": 350, "data": "2026-07-22", "categoria": null}, {"id": "1327046648", "tipo": "receita", "descricao": "Empresa Gordinho", "valor": 200, "data": "2026-07-22", "categoria": null}, {"id": "f802e032bb", "tipo": "receita", "descricao": "Reembolso almoço", "valor": 75.92, "data": "2026-07-23", "categoria": null}, {"id": "48448fb4fd", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-07-27", "categoria": null}, {"id": "a1916f0bef", "tipo": "receita", "descricao": "Empresa rayanne", "valor": 300, "data": "2026-07-24", "categoria": null}, {"id": "311f54f350", "tipo": "receita", "descricao": "Gratificação", "valor": 500, "data": "2026-07-31", "categoria": null}, {"id": "9076468964", "tipo": "receita", "descricao": "Salário", "valor": 9100, "data": "2026-07-31", "categoria": null}, {"id": "6d690de815", "tipo": "receita", "descricao": "Empresa Clara", "valor": 300, "data": "2026-08-31", "categoria": null}, {"id": "09ed7c77eb", "tipo": "receita", "descricao": "Reembolso salada", "valor": 113.05, "data": "2026-08-31", "categoria": null}, {"id": "61c564ffcb", "tipo": "receita", "descricao": "Reembolso mãe carnes", "valor": 400, "data": "2026-08-04", "categoria": null}, {"id": "0b6cc5cb7e", "tipo": "receita", "descricao": "reembolso bela", "valor": 84.72, "data": "2026-08-05", "categoria": null}, {"id": "a703ebdff3", "tipo": "receita", "descricao": "Seu zé", "valor": 300, "data": "2026-08-03", "categoria": null}, {"id": "6984efbc20", "tipo": "receita", "descricao": "Reembolso mãe cinema", "valor": 100, "data": "2026-08-04", "categoria": null}, {"id": "2b2a314360", "tipo": "receita", "descricao": "Seu zé", "valor": 200, "data": "2026-08-10", "categoria": null}, {"id": "163a51d6dd", "tipo": "receita", "descricao": "Empresa Alice", "valor": 300, "data": "2026-08-10", "categoria": null}, {"id": "4934a73343", "tipo": "receita", "descricao": "Empresa Nathaly", "valor": 200, "data": "2026-08-10", "categoria": null}, {"id": "bb10e4d579", "tipo": "receita", "descricao": "Empresa Gordinho", "valor": 200, "data": "2026-08-13", "categoria": null}, {"id": "89fb9d6caf", "tipo": "receita", "descricao": "Empresa Edimilson", "valor": 300, "data": "2026-08-13", "categoria": null}, {"id": "d08b320652", "tipo": "receita", "descricao": "reembolso bolo", "valor": 89.49, "data": "2026-08-13", "categoria": null}, {"id": "d13025e3b3", "tipo": "receita", "descricao": "gratificação", "valor": 500, "data": "2026-08-15", "categoria": null}, {"id": "96c75456c3", "tipo": "receita", "descricao": "carreata", "valor": 600, "data": "2026-08-15", "categoria": null}, {"id": "4d08a1871e", "tipo": "receita", "descricao": "seu zé", "valor": 200, "data": "2026-08-17", "categoria": null}, {"id": "05b4a45f81", "tipo": "receita", "descricao": "Empresa anderson", "valor": 300, "data": "2026-08-17", "categoria": null}, {"id": "434f18f35b", "tipo": "receita", "descricao": "Empresa Victoria", "valor": 300, "data": "2026-08-18", "categoria": null}, {"id": "30efe57cd3", "tipo": "variavel", "descricao": "Coca", "valor": 3.39, "data": "2025-06-02", "categoria": "alimentacao"}, {"id": "cb18c01177", "tipo": "variavel", "descricao": "Palha italiana", "valor": 6, "data": "2025-06-02", "categoria": "outros"}, {"id": "f5b190f0ea", "tipo": "variavel", "descricao": "Bomba", "valor": 85, "data": "2025-06-02", "categoria": "outros"}, {"id": "35b71ad2ee", "tipo": "variavel", "descricao": "Hamburguer viagem", "valor": 58, "data": "2025-06-05", "categoria": "lazer"}, {"id": "7433ddb242", "tipo": "variavel", "descricao": "hamburguer poliana", "valor": 44.79, "data": "2025-06-24", "categoria": "outros"}, {"id": "9bdf0ecbf5", "tipo": "variavel", "descricao": "Barraca", "valor": 160, "data": "2025-06-06", "categoria": "lazer"}, {"id": "2fc54fe2ca", "tipo": "variavel", "descricao": "Lanche", "valor": 36.31, "data": "2025-07-06", "categoria": "lazer"}, {"id": "0304759671", "tipo": "variavel", "descricao": "Beco do rato", "valor": 88, "data": "2025-06-05", "categoria": "lazer"}, {"id": "8cf9e2fd8e", "tipo": "variavel", "descricao": "maquiagem", "valor": 50, "data": "2025-07-04", "categoria": "lazer"}, {"id": "11d03a01ee", "tipo": "variavel", "descricao": "Cerveja natal", "valor": 36, "data": "2026-01-24", "categoria": "lazer"}, {"id": "9481c536db", "tipo": "variavel", "descricao": "Cerveja natal", "valor": 36.2, "data": "2026-01-25", "categoria": "lazer"}, {"id": "c992497090", "tipo": "variavel", "descricao": "mega senha", "valor": 30, "data": "2026-01-30", "categoria": "outros"}, {"id": "18a2db20f6", "tipo": "variavel", "descricao": "Taxa passagem SP", "valor": 95.01, "data": "2026-01-25", "categoria": "lazer"}, {"id": "df7251a814", "tipo": "variavel", "descricao": "gasolina", "valor": 50, "data": "2026-01-27", "categoria": "transporte"}, {"id": "9364bac4c7", "tipo": "variavel", "descricao": "Alguma coisa guilherme", "valor": 13, "data": "2026-01-27", "categoria": "outros"}, {"id": "eaafe9dac2", "tipo": "variavel", "descricao": "Farmacia", "valor": 18.03, "data": "2026-01-28", "categoria": "saude"}, {"id": "fd86dbfa1e", "tipo": "variavel", "descricao": "Alguma coisa guilherme", "valor": 14, "data": "2026-01-28", "categoria": "outros"}, {"id": "0e593a992e", "tipo": "variavel", "descricao": "Comper - fruta e salada", "valor": 35.9, "data": "2026-01-28", "categoria": "alimentacao"}, {"id": "1b25847480", "tipo": "variavel", "descricao": "Alguma coisa guilherme", "valor": 17, "data": "2026-01-28", "categoria": "outros"}, {"id": "4376ba5aa6", "tipo": "variavel", "descricao": "Sanduiche onibus", "valor": 60, "data": "2026-01-28", "categoria": "alimentacao"}, {"id": "de5e305d9d", "tipo": "variavel", "descricao": "salgado café", "valor": 30, "data": "2026-01-29", "categoria": "alimentacao"}, {"id": "264c778cbb", "tipo": "variavel", "descricao": "farmacia", "valor": 28.94, "data": "2026-01-29", "categoria": "saude"}, {"id": "f683a7eaf9", "tipo": "variavel", "descricao": "gasolina", "valor": 268.91, "data": "2026-01-29", "categoria": "transporte"}, {"id": "488b568aaf", "tipo": "variavel", "descricao": "tatico", "valor": 32, "data": "2026-01-30", "categoria": "alimentacao"}, {"id": "9b0e5bc396", "tipo": "variavel", "descricao": "tatico", "valor": 113.29, "data": "2026-01-31", "categoria": "alimentacao"}, {"id": "bd414a2d1c", "tipo": "variavel", "descricao": "BK", "valor": 36.8, "data": "2026-01-31", "categoria": "alimentacao"}, {"id": "bcf80f9f05", "tipo": "variavel", "descricao": "Sushi", "valor": 180.29, "data": "2026-01-31", "categoria": "alimentacao"}, {"id": "3984f3c964", "tipo": "variavel", "descricao": "Remedio vitor", "valor": 44.43, "data": "2026-01-01", "categoria": "saude"}, {"id": "ce75eb51c0", "tipo": "variavel", "descricao": "Poke", "valor": 53.84, "data": "2026-01-02", "categoria": "alimentacao"}, {"id": "ba3d0722aa", "tipo": "variavel", "descricao": "Cerveja leticia", "valor": 126, "data": "2026-01-03", "categoria": "lazer"}, {"id": "cfbad65c25", "tipo": "variavel", "descricao": "Padaria guito", "valor": 6.49, "data": "2026-01-03", "categoria": "alimentacao"}, {"id": "3b53bf28a4", "tipo": "variavel", "descricao": "garrafas", "valor": 94.98, "data": "2026-01-03", "categoria": "outros"}, {"id": "1207f3372f", "tipo": "variavel", "descricao": "Padaria guito (1)", "valor": 35.65, "data": "2026-01-03", "categoria": "alimentacao"}, {"id": "c1fcc37948", "tipo": "variavel", "descricao": "Patinho feio anv bruna", "valor": 129.8, "data": "2026-01-04", "categoria": "alimentacao"}, {"id": "be88900584", "tipo": "variavel", "descricao": "claro divida", "valor": 40.39, "data": "2026-01-08", "categoria": "assinaturas"}, {"id": "dede290e82", "tipo": "variavel", "descricao": "comper salada", "valor": 49.55, "data": "2026-01-05", "categoria": "alimentacao"}, {"id": "210d0cc669", "tipo": "variavel", "descricao": "tatico molhos", "valor": 15.75, "data": "2026-01-08", "categoria": "alimentacao"}, {"id": "1a118f649e", "tipo": "variavel", "descricao": "Padaria", "valor": 30.13, "data": "2026-01-08", "categoria": "alimentacao"}, {"id": "04f599f93b", "tipo": "variavel", "descricao": "Cabelo", "valor": 367, "data": "2026-01-09", "categoria": "saude"}, {"id": "74b318903b", "tipo": "variavel", "descricao": "padaria vitor", "valor": 68.7, "data": "2026-01-10", "categoria": "alimentacao"}, {"id": "556a2b045b", "tipo": "variavel", "descricao": "Traíra", "valor": 164.05, "data": "2026-01-10", "categoria": "alimentacao"}, {"id": "22cf1c5836", "tipo": "variavel", "descricao": "Traíra", "valor": 13.2, "data": "2026-01-10", "categoria": "alimentacao"}, {"id": "80d1a3e57b", "tipo": "variavel", "descricao": "Ordinário", "valor": 136.89, "data": "2026-01-11", "categoria": "lazer"}, {"id": "a69f18c303", "tipo": "variavel", "descricao": "Carne vitor", "valor": 38, "data": "2026-01-11", "categoria": "alimentacao"}, {"id": "b0b85d5b8b", "tipo": "variavel", "descricao": "doces", "valor": 36, "data": "2026-01-13", "categoria": "alimentacao"}, {"id": "30a6dfde31", "tipo": "variavel", "descricao": "almoço", "valor": 32.88, "data": "2026-01-14", "categoria": "alimentacao"}, {"id": "7b4ae686a2", "tipo": "variavel", "descricao": "Presente Glaucia", "valor": 25, "data": "2026-01-12", "categoria": "outros"}, {"id": "4037559bed", "tipo": "variavel", "descricao": "Donburi", "valor": 106.93, "data": "2026-01-18", "categoria": "alimentacao"}, {"id": "5e61fc79fd", "tipo": "variavel", "descricao": "Farmacia (dipirona e desodorante)", "valor": 50.23, "data": "2026-01-18", "categoria": "saude"}, {"id": "a48e3e86ae", "tipo": "variavel", "descricao": "Comper (almoço)", "valor": 54.41, "data": "2026-01-18", "categoria": "alimentacao"}, {"id": "1645ba2937", "tipo": "variavel", "descricao": "Burguer king", "valor": 37.98, "data": "2026-01-18", "categoria": "alimentacao"}, {"id": "13b93ae4ed", "tipo": "variavel", "descricao": "Cerveja brenda", "valor": 21, "data": "2026-01-17", "categoria": "lazer"}, {"id": "723fd21131", "tipo": "variavel", "descricao": "Cerveja brenda", "valor": 26, "data": "2026-01-17", "categoria": "lazer"}, {"id": "9b101e2c67", "tipo": "variavel", "descricao": "Sams club", "valor": 192.1, "data": "2026-01-16", "categoria": "alimentacao"}, {"id": "417ec5666e", "tipo": "variavel", "descricao": "Coco bambu", "valor": 127.18, "data": "2026-01-16", "categoria": "alimentacao"}, {"id": "cfb04aa490", "tipo": "variavel", "descricao": "Estacionamento df plaza", "valor": 16, "data": "2026-01-16", "categoria": "outros"}, {"id": "cf12830790", "tipo": "variavel", "descricao": "Pneu", "valor": 40, "data": "2026-01-19", "categoria": "transporte"}, {"id": "34a08688f0", "tipo": "variavel", "descricao": "Gasolina", "valor": 117.8, "data": "2026-01-19", "categoria": "transporte"}, {"id": "d63155a199", "tipo": "variavel", "descricao": "Mercado", "valor": 28.94, "data": "2026-01-20", "categoria": "alimentacao"}, {"id": "e589c879c0", "tipo": "variavel", "descricao": "master pão", "valor": 21.9, "data": "2026-01-21", "categoria": "alimentacao"}, {"id": "5ef541a01e", "tipo": "variavel", "descricao": "drogasil", "valor": 161.86, "data": "2026-01-22", "categoria": "saude"}, {"id": "707a367228", "tipo": "variavel", "descricao": "pneu", "valor": 15, "data": "2026-01-23", "categoria": "transporte"}, {"id": "0f4e550e63", "tipo": "variavel", "descricao": "Desloratadina", "valor": 10.79, "data": "2026-01-23", "categoria": "saude"}, {"id": "a67dcfcfec", "tipo": "variavel", "descricao": "Tatico - carnes", "valor": 322.11, "data": "2026-01-23", "categoria": "alimentacao"}, {"id": "fbb62b3549", "tipo": "variavel", "descricao": "unha sabrina", "valor": 159.94, "data": "2026-01-24", "categoria": "saude"}, {"id": "3591301f02", "tipo": "variavel", "descricao": "cerveja italo", "valor": 49, "data": "2026-01-24", "categoria": "lazer"}, {"id": "c5983e6846", "tipo": "variavel", "descricao": "uber", "valor": 2.56, "data": "2026-01-24", "categoria": "transporte"}, {"id": "63f7036d8c", "tipo": "variavel", "descricao": "doce", "valor": 22, "data": "2026-01-26", "categoria": "alimentacao"}, {"id": "891b6afa2a", "tipo": "variavel", "descricao": "Hamburguer pracinha", "valor": 68, "data": "2026-01-24", "categoria": "alimentacao"}, {"id": "053ff7f8fd", "tipo": "variavel", "descricao": "calistenia", "valor": 27, "data": "2026-01-25", "categoria": "saude"}, {"id": "f5bfb1e301", "tipo": "variavel", "descricao": "Almoço subway", "valor": 36.98, "data": "2026-01-08", "categoria": "alimentacao"}, {"id": "10b34d688b", "tipo": "variavel", "descricao": "Almoço Parmegiana", "valor": 40.89, "data": "2026-01-22", "categoria": "alimentacao"}, {"id": "52c5222d2e", "tipo": "variavel", "descricao": "Cerveja natal", "valor": 14, "data": "2026-01-24", "categoria": "lazer"}, {"id": "ac984ebb51", "tipo": "variavel", "descricao": "netflix", "valor": 44.9, "data": "2026-01-27", "categoria": "assinaturas"}, {"id": "a0f56be8ec", "tipo": "variavel", "descricao": "Aquele com café - kamila", "valor": 114.18, "data": "2026-01-27", "categoria": "alimentacao"}, {"id": "92d11cea1d", "tipo": "variavel", "descricao": "Gasolina", "valor": 50, "data": "2026-01-27", "categoria": "transporte"}, {"id": "5ae7a649e1", "tipo": "variavel", "descricao": "Carrefour alfaces", "valor": 26.56, "data": "2026-01-27", "categoria": "alimentacao"}, {"id": "423dccbde2", "tipo": "variavel", "descricao": "Aniversário Lucineide", "valor": 25, "data": "2026-01-29", "categoria": "outros"}, {"id": "11f271ed65", "tipo": "variavel", "descricao": "Tatico copos bela", "valor": 33.04, "data": "2026-01-28", "categoria": "outros"}, {"id": "57b9428d64", "tipo": "variavel", "descricao": "Coco bambu bela", "valor": 285.8, "data": "2026-01-26", "categoria": "outros"}, {"id": "c5bd0510d6", "tipo": "variavel", "descricao": "Espetinho", "valor": 25, "data": "2026-02-28", "categoria": "alimentacao"}, {"id": "c518b26f3a", "tipo": "variavel", "descricao": "Speed ano novo", "valor": 51.84, "data": "2026-01-01", "categoria": "alimentacao"}, {"id": "6d6ee3d4a3", "tipo": "variavel", "descricao": "drogasil", "valor": 18.73, "data": "2026-01-15", "categoria": "saude"}, {"id": "bc21474b16", "tipo": "variavel", "descricao": "estacionamento cinema", "valor": 20, "data": "2026-01-15", "categoria": "outros"}, {"id": "c94b518a1c", "tipo": "variavel", "descricao": "Picolé meninas", "valor": 144, "data": "2026-02-28", "categoria": "outros"}, {"id": "e2e927f361", "tipo": "variavel", "descricao": "Uber", "valor": 120, "data": "2026-01-30", "categoria": "transporte"}, {"id": "d15235c8a3", "tipo": "variavel", "descricao": "Ordinario", "valor": 255.38, "data": "2026-02-28", "categoria": "lazer"}, {"id": "b18e7c3d58", "tipo": "variavel", "descricao": "Mc donalds", "valor": 79.8, "data": "2026-02-28", "categoria": "alimentacao"}, {"id": "213b995ba0", "tipo": "variavel", "descricao": "Comer compras", "valor": 81.94, "data": "2026-02-28", "categoria": "alimentacao"}, {"id": "dc34c92ad8", "tipo": "variavel", "descricao": "Cocas brenda", "valor": 20.5, "data": "2026-02-01", "categoria": "lazer"}, {"id": "f88e854a8a", "tipo": "variavel", "descricao": "Sanduiche trailer", "valor": 71, "data": "2026-02-28", "categoria": "alimentacao"}, {"id": "5cf7a08529", "tipo": "variavel", "descricao": "Pão recheado", "valor": 40.96, "data": "2026-02-01", "categoria": "alimentacao"}, {"id": "666ee6dddc", "tipo": "variavel", "descricao": "Gasolina", "valor": 100, "data": "2026-02-02", "categoria": "transporte"}, {"id": "193e567bab", "tipo": "variavel", "descricao": "Aniversário Gabi", "valor": 25, "data": "2026-02-03", "categoria": "outros"}, {"id": "5af9cf653a", "tipo": "variavel", "descricao": "Lava-Jato", "valor": 35, "data": "2026-01-01", "categoria": "transporte"}, {"id": "2aec7bd425", "tipo": "variavel", "descricao": "Tatico mercado", "valor": 21.47, "data": "2026-02-28", "categoria": "alimentacao"}, {"id": "b430ba5221", "tipo": "variavel", "descricao": "Veronica cardoso", "valor": 40, "data": "2026-02-28", "categoria": "alimentacao"}, {"id": "73b4273ecd", "tipo": "variavel", "descricao": "Capinha celular", "valor": 50, "data": "2026-02-04", "categoria": "outros"}, {"id": "eb1f9f5cd3", "tipo": "variavel", "descricao": "Salgado", "valor": 12.5, "data": "2026-02-04", "categoria": "alimentacao"}, {"id": "6402253338", "tipo": "variavel", "descricao": "Padaria sopa", "valor": 6.07, "data": "2026-02-04", "categoria": "alimentacao"}, {"id": "47f0f82f00", "tipo": "variavel", "descricao": "Ginecologista", "valor": 230, "data": "2026-02-04", "categoria": "saude"}, {"id": "dcbbdf3436", "tipo": "variavel", "descricao": "Cerveja festa Guito", "valor": 140, "data": "2026-02-05", "categoria": "lazer"}, {"id": "d18954bd8f", "tipo": "variavel", "descricao": "sushi", "valor": 224.6, "data": "2026-02-05", "categoria": "alimentacao"}, {"id": "a90761dd93", "tipo": "variavel", "descricao": "Spoleto", "valor": 87.2, "data": "2026-02-08", "categoria": "alimentacao"}, {"id": "7398c1b017", "tipo": "variavel", "descricao": "Gasolina", "valor": 273.6, "data": "2026-02-08", "categoria": "transporte"}, {"id": "67f5b9e61d", "tipo": "variavel", "descricao": "Coxinha", "valor": 6, "data": "2026-02-06", "categoria": "alimentacao"}, {"id": "3d9ed27019", "tipo": "variavel", "descricao": "Cerveja sexta", "valor": 30.94, "data": "2026-02-06", "categoria": "alimentacao"}, {"id": "766cbc12a1", "tipo": "variavel", "descricao": "Sobrancelha", "valor": 51.63, "data": "2026-02-07", "categoria": "saude"}, {"id": "c9ce52e323", "tipo": "variavel", "descricao": "BK", "valor": 40.9, "data": "2026-02-07", "categoria": "alimentacao"}, {"id": "f18033fec0", "tipo": "variavel", "descricao": "Mercado (compras)", "valor": 137.85, "data": "2026-02-10", "categoria": "alimentacao"}, {"id": "b55af627ef", "tipo": "variavel", "descricao": "Salgado café", "valor": 17.5, "data": "2026-02-12", "categoria": "alimentacao"}, {"id": "b346f43839", "tipo": "variavel", "descricao": "Aniversario Silvana", "valor": 25, "data": "2026-02-13", "categoria": "outros"}, {"id": "ef74255a39", "tipo": "variavel", "descricao": "Unha", "valor": 154.78, "data": "2026-02-12", "categoria": "saude"}, {"id": "e6df274629", "tipo": "variavel", "descricao": "corretivo", "valor": 15.99, "data": "2026-02-12", "categoria": "saude"}, {"id": "5e5652f7f5", "tipo": "variavel", "descricao": "remedio bela", "valor": 23.79, "data": "2026-02-12", "categoria": "saude"}, {"id": "30edec8e7e", "tipo": "variavel", "descricao": "compras viagem", "valor": 240.67, "data": "2026-02-11", "categoria": "alimentacao"}, {"id": "0480e25916", "tipo": "variavel", "descricao": "Multa Sandero", "valor": 148.59, "data": "2026-02-25", "categoria": "transporte"}, {"id": "658e30858b", "tipo": "variavel", "descricao": "Licenciamento UP", "valor": 106.26, "data": "2026-02-25", "categoria": "transporte"}, {"id": "8bbffe5ebd", "tipo": "variavel", "descricao": "icloud", "valor": 19.9, "data": "2026-02-03", "categoria": "assinaturas"}, {"id": "bc8950adec", "tipo": "variavel", "descricao": "1º dia de viagem", "valor": 310.3, "data": "2026-02-13", "categoria": "lazer"}, {"id": "c96ab9d749", "tipo": "variavel", "descricao": "2º dia de viagem", "valor": 634.24, "data": "2026-02-14", "categoria": "lazer"}, {"id": "334a60fd75", "tipo": "variavel", "descricao": "3º dia de viagem", "valor": 434.3, "data": "2026-02-15", "categoria": "lazer"}, {"id": "925263685b", "tipo": "variavel", "descricao": "4º dia de viagem", "valor": 315.25, "data": "2026-02-16", "categoria": "lazer"}, {"id": "834baa4253", "tipo": "variavel", "descricao": "5º dia de viagem", "valor": 368.3, "data": "2026-02-17", "categoria": "lazer"}, {"id": "2102723ac5", "tipo": "variavel", "descricao": "6º dia de viagem", "valor": 406.35, "data": "2026-02-18", "categoria": "lazer"}, {"id": "2a25b046e9", "tipo": "variavel", "descricao": "7º dia de viagem", "valor": 785.03, "data": "2026-02-19", "categoria": "lazer"}, {"id": "5e7a4cf01b", "tipo": "variavel", "descricao": "8º dia de viagem", "valor": 741.61, "data": "2026-02-20", "categoria": "lazer"}, {"id": "763cc748a0", "tipo": "variavel", "descricao": "9º dia de viagem", "valor": 153.76, "data": "2026-02-21", "categoria": "lazer"}, {"id": "9e7cec23f3", "tipo": "variavel", "descricao": "Hamburguer prime", "valor": 52, "data": "2026-02-22", "categoria": "alimentacao"}, {"id": "71fea955ab", "tipo": "variavel", "descricao": "Carrefour alface", "valor": 70.78, "data": "2026-03-25", "categoria": "alimentacao"}, {"id": "d731dca7e3", "tipo": "variavel", "descricao": "Gasolina viagem", "valor": 117.93, "data": "2026-02-13", "categoria": "lazer"}, {"id": "b956e4aaaa", "tipo": "variavel", "descricao": "Cooler", "valor": 85.98, "data": "2026-02-13", "categoria": "lazer"}, {"id": "e21d0e4c2b", "tipo": "variavel", "descricao": "Pedágio", "valor": 11.3, "data": "2026-02-13", "categoria": "lazer"}, {"id": "9ba5bb90b5", "tipo": "variavel", "descricao": "Cerveja", "valor": 72, "data": "2026-02-15", "categoria": "lazer"}, {"id": "ff1f2390f2", "tipo": "variavel", "descricao": "Parmegiana", "valor": 75.89, "data": "2026-02-21", "categoria": "alimentacao"}, {"id": "c2b21fd267", "tipo": "variavel", "descricao": "Alface", "valor": 13, "data": "2026-02-22", "categoria": "alimentacao"}, {"id": "34085df8df", "tipo": "variavel", "descricao": "Almoço tatico", "valor": 50.79, "data": "2026-02-24", "categoria": "alimentacao"}, {"id": "eaa87a2a2a", "tipo": "variavel", "descricao": "Padaria", "valor": 44.44, "data": "2026-02-07", "categoria": "alimentacao"}, {"id": "7806fcb0f3", "tipo": "variavel", "descricao": "Unha maria", "valor": 50, "data": "2026-03-27", "categoria": "saude"}, {"id": "aad198b4ad", "tipo": "variavel", "descricao": "Remédio", "valor": 31.96, "data": "2026-03-27", "categoria": "saude"}, {"id": "18b7827a3b", "tipo": "variavel", "descricao": "Bebidas Renan", "valor": 121, "data": "2026-03-28", "categoria": "lazer"}, {"id": "81238d17e8", "tipo": "variavel", "descricao": "Remédio", "valor": 36.89, "data": "2026-03-01", "categoria": "saude"}, {"id": "826df68cd3", "tipo": "variavel", "descricao": "Gasolina", "valor": 267.01, "data": "2026-03-01", "categoria": "transporte"}, {"id": "b0acd080b3", "tipo": "variavel", "descricao": "MC Donalds", "valor": 87.8, "data": "2026-03-01", "categoria": "alimentacao"}, {"id": "3dc17df3ad", "tipo": "variavel", "descricao": "Farmacia", "valor": 26.39, "data": "2026-03-01", "categoria": "saude"}, {"id": "4606706942", "tipo": "variavel", "descricao": "Brincos Maria", "valor": 113, "data": "2026-02-03", "categoria": "outros"}, {"id": "f46a723699", "tipo": "variavel", "descricao": "Presente Silvana", "valor": 59.95, "data": "2026-02-03", "categoria": "outros"}, {"id": "0600bc3cfb", "tipo": "variavel", "descricao": "Exame", "valor": 90, "data": "2026-03-03", "categoria": "saude"}, {"id": "16e260b50f", "tipo": "variavel", "descricao": "Drogasil produtos", "valor": 96.16, "data": "2026-03-04", "categoria": "saude"}, {"id": "4c904f12bd", "tipo": "variavel", "descricao": "Drogasil remédios", "valor": 92.42, "data": "2026-03-04", "categoria": "saude"}, {"id": "edd6cb8c1d", "tipo": "variavel", "descricao": "Sementes", "valor": 59, "data": "2026-03-03", "categoria": "alimentacao"}, {"id": "6872c0bd99", "tipo": "variavel", "descricao": "Compras mês", "valor": 428.22, "data": "2026-03-03", "categoria": "alimentacao"}, {"id": "bb67a43133", "tipo": "variavel", "descricao": "Açai", "valor": 39.14, "data": "2026-03-05", "categoria": "alimentacao"}, {"id": "f833986c02", "tipo": "variavel", "descricao": "Pão janta brenda", "valor": 16.8, "data": "2026-03-05", "categoria": "alimentacao"}, {"id": "9a88c0851a", "tipo": "variavel", "descricao": "Manapoke", "valor": 112, "data": "2026-03-06", "categoria": "alimentacao"}, {"id": "d2c9c4afe3", "tipo": "variavel", "descricao": "Carrefour", "valor": 143.39, "data": "2026-03-07", "categoria": "alimentacao"}, {"id": "f4cc5adb14", "tipo": "variavel", "descricao": "Feira frutas", "valor": 74.49, "data": "2026-03-08", "categoria": "alimentacao"}, {"id": "c775f5b144", "tipo": "variavel", "descricao": "Jerivá", "valor": 32.4, "data": "2026-03-12", "categoria": "alimentacao"}, {"id": "b2fa731c48", "tipo": "variavel", "descricao": "Estacionamento", "valor": 13, "data": "2026-03-12", "categoria": "outros"}, {"id": "a224cc5860", "tipo": "variavel", "descricao": "Jerivá Silvana", "valor": 15, "data": "2026-03-12", "categoria": "alimentacao"}, {"id": "f1d5ce1c94", "tipo": "variavel", "descricao": "Jerivá", "valor": 18.25, "data": "2026-03-12", "categoria": "alimentacao"}, {"id": "de554474f7", "tipo": "variavel", "descricao": "Café tatico", "valor": 13.75, "data": "2026-03-16", "categoria": "alimentacao"}, {"id": "be34720233", "tipo": "variavel", "descricao": "Pizza", "valor": 64.98, "data": "2026-03-15", "categoria": "alimentacao"}, {"id": "f8c4c2c8e8", "tipo": "variavel", "descricao": "cerveja brenda", "valor": 28, "data": "2026-03-14", "categoria": "lazer"}, {"id": "c254743d96", "tipo": "variavel", "descricao": "tatico risoto", "valor": 80.55, "data": "2026-03-13", "categoria": "alimentacao"}, {"id": "b83c37bf2d", "tipo": "variavel", "descricao": "Unha", "valor": 62, "data": "2026-03-16", "categoria": "saude"}, {"id": "643cc9a18a", "tipo": "variavel", "descricao": "Mercado", "valor": 38.13, "data": "2026-03-18", "categoria": "alimentacao"}, {"id": "c327f39031", "tipo": "variavel", "descricao": "Loja Vicente", "valor": 42, "data": "2026-03-18", "categoria": "outros"}, {"id": "fc189cb2da", "tipo": "variavel", "descricao": "Hamburguer", "valor": 98.88, "data": "2026-03-18", "categoria": "alimentacao"}, {"id": "aa1e2163a1", "tipo": "variavel", "descricao": "Gasolina", "valor": 263.73, "data": "2026-03-19", "categoria": "transporte"}, {"id": "6431cbe085", "tipo": "variavel", "descricao": "Padaria", "valor": 24.24, "data": "2026-03-19", "categoria": "alimentacao"}, {"id": "e6f826a8bc", "tipo": "variavel", "descricao": "Almoço sexta", "valor": 32.07, "data": "2026-03-20", "categoria": "alimentacao"}, {"id": "524a3e07fa", "tipo": "variavel", "descricao": "Coca", "valor": 12.5, "data": "2026-03-22", "categoria": "alimentacao"}, {"id": "25f9d163b9", "tipo": "variavel", "descricao": "Comper", "valor": 103.11, "data": "2026-03-22", "categoria": "alimentacao"}, {"id": "4c91050e13", "tipo": "variavel", "descricao": "Estacionamento mané", "valor": 24, "data": "2026-03-20", "categoria": "outros"}, {"id": "b1b006ff7f", "tipo": "variavel", "descricao": "Mané", "valor": 160.99, "data": "2026-03-20", "categoria": "alimentacao"}, {"id": "f0aa742ff0", "tipo": "variavel", "descricao": "Maria anéis", "valor": 178, "data": "2026-03-10", "categoria": "outros"}, {"id": "fcdc81e01b", "tipo": "variavel", "descricao": "União Estável", "valor": 156.83, "data": "2026-03-24", "categoria": "lazer"}, {"id": "c75ca1e509", "tipo": "variavel", "descricao": "Capital de prêmio", "valor": 10, "data": "2026-03-24", "categoria": "lazer"}, {"id": "56787801db", "tipo": "variavel", "descricao": "Pé e Sobrancelha", "valor": 120, "data": "2026-03-24", "categoria": "saude"}, {"id": "7afd9e8c0a", "tipo": "variavel", "descricao": "Almoço quarta", "valor": 35.31, "data": "2026-03-25", "categoria": "alimentacao"}, {"id": "69d6e1bfb0", "tipo": "variavel", "descricao": "Marmita", "valor": 18, "data": "2026-04-26", "categoria": "alimentacao"}, {"id": "019d90fcab", "tipo": "variavel", "descricao": "Uber", "valor": 14.87, "data": "2026-03-25", "categoria": "transporte"}, {"id": "483f3892f7", "tipo": "variavel", "descricao": "Manutenção ap", "valor": 70, "data": "2026-03-26", "categoria": "moradia"}, {"id": "4d5d8bac77", "tipo": "variavel", "descricao": "Coca", "valor": 3.69, "data": "2026-03-26", "categoria": "alimentacao"}, {"id": "886d0e8d46", "tipo": "variavel", "descricao": "Placa detran", "valor": 241, "data": "2026-03-31", "categoria": "transporte"}, {"id": "3795965f07", "tipo": "variavel", "descricao": "App brasília em dobro", "valor": 99.9, "data": "2026-03-12", "categoria": "alimentacao"}, {"id": "c945a61dfc", "tipo": "variavel", "descricao": "Capinha celular", "valor": 115.11, "data": "2026-03-05", "categoria": "outros"}, {"id": "71959509ba", "tipo": "variavel", "descricao": "Tik tok shop", "valor": 99.14, "data": "2026-03-19", "categoria": "outros"}, {"id": "861b15466f", "tipo": "variavel", "descricao": "Taxa checkin airbnb", "valor": 50, "data": "2026-03-26", "categoria": "lazer"}, {"id": "fee8afb59e", "tipo": "variavel", "descricao": "Capital de prêmios", "valor": 1.79, "data": "2026-03-24", "categoria": "lazer"}, {"id": "d997656fa9", "tipo": "variavel", "descricao": "Capirinhas", "valor": 65, "data": "2026-03-29", "categoria": "lazer"}, {"id": "b9002c6f7f", "tipo": "variavel", "descricao": "Ajuda moço", "valor": 5, "data": "2026-03-30", "categoria": "outros"}, {"id": "944d93577e", "tipo": "variavel", "descricao": "Tempurá", "valor": 20, "data": "2026-03-29", "categoria": "lazer"}, {"id": "bff3e23e1c", "tipo": "variavel", "descricao": "Uber - SP", "valor": 120, "data": "2026-04-26", "categoria": "lazer"}, {"id": "b0c681d15e", "tipo": "variavel", "descricao": "Ifood 1 noite", "valor": 106.79, "data": "2026-04-26", "categoria": "lazer"}, {"id": "591402befc", "tipo": "variavel", "descricao": "Uber - SP", "valor": 50, "data": "2026-04-26", "categoria": "lazer"}, {"id": "8ae02b5dda", "tipo": "variavel", "descricao": "Tatico", "valor": 10.68, "data": "2026-04-26", "categoria": "alimentacao"}, {"id": "2a6e1418a5", "tipo": "variavel", "descricao": "Entrada museu do futebol", "valor": 36, "data": "2026-04-27", "categoria": "lazer"}, {"id": "ff226d247e", "tipo": "variavel", "descricao": "Energético", "valor": 10.99, "data": "2026-04-27", "categoria": "lazer"}, {"id": "a5d012ec9c", "tipo": "variavel", "descricao": "Almoço 1 dia", "valor": 74.28, "data": "2026-04-27", "categoria": "lazer"}, {"id": "725e8d55ae", "tipo": "variavel", "descricao": "Copan bar", "valor": 58.98, "data": "2026-04-27", "categoria": "lazer"}, {"id": "7fe1539c54", "tipo": "variavel", "descricao": "Metrô", "valor": 5.4, "data": "2026-04-27", "categoria": "lazer"}, {"id": "b947d5753d", "tipo": "variavel", "descricao": "Conveniência", "valor": 47.97, "data": "2026-04-28", "categoria": "lazer"}, {"id": "f269f5d3ab", "tipo": "variavel", "descricao": "Bar do véi", "valor": 150.88, "data": "2026-04-28", "categoria": "lazer"}, {"id": "62722f15df", "tipo": "variavel", "descricao": "Uber - SP", "valor": 127, "data": "2026-04-28", "categoria": "lazer"}, {"id": "026043654e", "tipo": "variavel", "descricao": "Temaki do Ailton", "valor": 58, "data": "2026-04-29", "categoria": "lazer"}, {"id": "1addd2b7a5", "tipo": "variavel", "descricao": "Loja de cosméticos", "valor": 84.8, "data": "2026-04-29", "categoria": "lazer"}, {"id": "2f8e05b04b", "tipo": "variavel", "descricao": "Liberdade", "valor": 157.89, "data": "2026-04-29", "categoria": "lazer"}, {"id": "48e5316947", "tipo": "variavel", "descricao": "Boteco da Manu", "valor": 249.51, "data": "2026-04-29", "categoria": "lazer"}, {"id": "8b8cdefffa", "tipo": "variavel", "descricao": "Almoço segunda", "valor": 79.88, "data": "2026-04-30", "categoria": "lazer"}, {"id": "74645a234e", "tipo": "variavel", "descricao": "Uber", "valor": 20, "data": "2026-04-30", "categoria": "lazer"}, {"id": "97eff4c390", "tipo": "variavel", "descricao": "Casarao", "valor": 71.9, "data": "2026-04-30", "categoria": "lazer"}, {"id": "5c6973fbe3", "tipo": "variavel", "descricao": "Tatico - casa", "valor": 77.13, "data": "2026-04-30", "categoria": "alimentacao"}, {"id": "cf3c5176b3", "tipo": "variavel", "descricao": "Cacau show", "valor": 169.98, "data": "2026-04-01", "categoria": "outros"}, {"id": "78e4e6fa10", "tipo": "variavel", "descricao": "Almoço", "valor": 33, "data": "2026-04-01", "categoria": "alimentacao"}, {"id": "0b26262953", "tipo": "variavel", "descricao": "Lanche unb", "valor": 14, "data": "2026-04-01", "categoria": "alimentacao"}, {"id": "f0b632ee3a", "tipo": "variavel", "descricao": "mercado do mês", "valor": 355.6, "data": "2026-04-02", "categoria": "alimentacao"}, {"id": "c9d5c39ba0", "tipo": "variavel", "descricao": "Estacionamento Carrefour", "valor": 8, "data": "2026-04-04", "categoria": "outros"}, {"id": "6cd245cfe5", "tipo": "variavel", "descricao": "Cacau show Guito/Maitê", "valor": 68.49, "data": "2026-04-04", "categoria": "outros"}, {"id": "8e02f1f18f", "tipo": "variavel", "descricao": "Madre teresa", "valor": 62.84, "data": "2026-04-04", "categoria": "alimentacao"}, {"id": "c060fb9bb3", "tipo": "variavel", "descricao": "Boneco Guito", "valor": 49.61, "data": "2026-04-05", "categoria": "outros"}, {"id": "907d00f806", "tipo": "variavel", "descricao": "Maria - coca", "valor": 3.69, "data": "2026-03-02", "categoria": "alimentacao"}, {"id": "cb1f6948b1", "tipo": "variavel", "descricao": "Açaí guito", "valor": 45, "data": "2026-04-05", "categoria": "alimentacao"}, {"id": "feebede814", "tipo": "variavel", "descricao": "Prime burguer", "valor": 74, "data": "2026-04-05", "categoria": "alimentacao"}, {"id": "3fbec3ff8f", "tipo": "variavel", "descricao": "Placa carro", "valor": 227, "data": "2026-04-06", "categoria": "transporte"}, {"id": "63cc2804e4", "tipo": "variavel", "descricao": "Peixe", "valor": 70, "data": "2026-04-03", "categoria": "alimentacao"}, {"id": "eb5a8bf150", "tipo": "variavel", "descricao": "Festa brenda", "valor": 121, "data": "2026-04-07", "categoria": "lazer"}, {"id": "3d6526ddf9", "tipo": "variavel", "descricao": "Comper alface", "valor": 17.95, "data": "2026-04-07", "categoria": "alimentacao"}, {"id": "d281a292b6", "tipo": "variavel", "descricao": "Davi energéticos", "valor": 30, "data": "2026-04-11", "categoria": "lazer"}, {"id": "5a0b6a1430", "tipo": "variavel", "descricao": "Frango no pote", "valor": 50.5, "data": "2026-04-12", "categoria": "alimentacao"}, {"id": "8c4906d4b2", "tipo": "variavel", "descricao": "Drogasil", "valor": 82.04, "data": "2026-04-12", "categoria": "saude"}, {"id": "45b4013f8d", "tipo": "variavel", "descricao": "Sandô", "valor": 46.43, "data": "2026-04-12", "categoria": "alimentacao"}, {"id": "c580e01339", "tipo": "variavel", "descricao": "Padaria", "valor": 42.89, "data": "2026-04-12", "categoria": "alimentacao"}, {"id": "f98664dcb0", "tipo": "variavel", "descricao": "Pastel circo", "valor": 35, "data": "2026-04-10", "categoria": "alimentacao"}, {"id": "0b8993a542", "tipo": "variavel", "descricao": "Alteração empresa", "valor": 157.15, "data": "2026-04-14", "categoria": "outros"}, {"id": "fea5c26c1d", "tipo": "variavel", "descricao": "Remédio thairine", "valor": 34.99, "data": "2026-04-16", "categoria": "saude"}, {"id": "3bdc891000", "tipo": "variavel", "descricao": "Almoço", "valor": 46.41, "data": "2026-04-16", "categoria": "alimentacao"}, {"id": "b9dad84fd3", "tipo": "variavel", "descricao": "Unha", "valor": 67, "data": "2026-04-16", "categoria": "saude"}, {"id": "70ecc3e9ae", "tipo": "variavel", "descricao": "Padaria", "valor": 27.16, "data": "2026-04-16", "categoria": "alimentacao"}, {"id": "9feef66f88", "tipo": "variavel", "descricao": "Espetinho", "valor": 48, "data": "2026-04-15", "categoria": "alimentacao"}, {"id": "ef3b3f68ec", "tipo": "variavel", "descricao": "Tatico", "valor": 23.37, "data": "2026-04-14", "categoria": "alimentacao"}, {"id": "8bbc506c84", "tipo": "variavel", "descricao": "gasolina", "valor": 264.93, "data": "2026-04-16", "categoria": "transporte"}, {"id": "b9e0d8b3b8", "tipo": "variavel", "descricao": "Drogasil seringa", "valor": 46.09, "data": "2026-04-16", "categoria": "saude"}, {"id": "16568fd2db", "tipo": "variavel", "descricao": "Mercado", "valor": 105.62, "data": "2026-04-17", "categoria": "alimentacao"}, {"id": "9620cef36d", "tipo": "variavel", "descricao": "Almoço", "valor": 16.37, "data": "2026-04-18", "categoria": "alimentacao"}, {"id": "ecfcbe3f35", "tipo": "variavel", "descricao": "Ajuda eixao", "valor": 15, "data": "2026-04-19", "categoria": "outros"}, {"id": "3c7d280eac", "tipo": "variavel", "descricao": "Tik tok vasilhas", "valor": 428.1, "data": "2026-04-17", "categoria": "outros"}, {"id": "fc64f82794", "tipo": "variavel", "descricao": "Uber", "valor": 19.98, "data": "2026-04-22", "categoria": "transporte"}, {"id": "54ba7bf8b9", "tipo": "variavel", "descricao": "Subway", "valor": 70.3, "data": "2026-04-17", "categoria": "alimentacao"}, {"id": "44d40d9191", "tipo": "variavel", "descricao": "espetinho eixao", "valor": 15, "data": "2026-04-19", "categoria": "alimentacao"}, {"id": "96165bf25d", "tipo": "variavel", "descricao": "bicicleta", "valor": 30, "data": "2026-04-19", "categoria": "lazer"}, {"id": "9bebe9ee44", "tipo": "variavel", "descricao": "açai eixao", "valor": 20, "data": "2026-04-19", "categoria": "alimentacao"}, {"id": "bcb2d4ce6c", "tipo": "variavel", "descricao": "farmácia", "valor": 72.98, "data": "2026-04-21", "categoria": "saude"}, {"id": "a2369595a1", "tipo": "variavel", "descricao": "sobrancelha", "valor": 51.63, "data": "2026-04-23", "categoria": "saude"}, {"id": "bf0a5273e8", "tipo": "variavel", "descricao": "tatico", "valor": 7.28, "data": "2026-04-23", "categoria": "alimentacao"}, {"id": "d11aff92cd", "tipo": "variavel", "descricao": "almoço sabor mineiro", "valor": 31.21, "data": "2026-04-24", "categoria": "alimentacao"}, {"id": "0d6cea8269", "tipo": "variavel", "descricao": "boteco brahma", "valor": 61.27, "data": "2026-04-25", "categoria": "lazer"}, {"id": "e9a73af350", "tipo": "variavel", "descricao": "cartão vitor", "valor": 202.04, "data": "2026-04-26", "categoria": "lazer"}, {"id": "3f36fd63b8", "tipo": "variavel", "descricao": "Dona Maria - sanduiche", "valor": 25.99, "data": "2026-05-26", "categoria": "alimentacao"}, {"id": "c9cd3bf018", "tipo": "variavel", "descricao": "Bicicleta eixao", "valor": 30, "data": "2026-05-26", "categoria": "lazer"}, {"id": "19e2453285", "tipo": "variavel", "descricao": "drogasil", "valor": 17.39, "data": "2026-05-26", "categoria": "saude"}, {"id": "8c81b17d1e", "tipo": "variavel", "descricao": "Primor hamburguer", "valor": 55.02, "data": "2026-05-26", "categoria": "alimentacao"}, {"id": "9d1e17d3dc", "tipo": "variavel", "descricao": "Paleta eixao", "valor": 15, "data": "2026-05-26", "categoria": "alimentacao"}, {"id": "434b4c000d", "tipo": "variavel", "descricao": "tatico", "valor": 24.9, "data": "2026-05-29", "categoria": "alimentacao"}, {"id": "df0a5c8922", "tipo": "variavel", "descricao": "lifebox leticia", "valor": 85.8, "data": "2026-05-01", "categoria": "alimentacao"}, {"id": "19291bf15c", "tipo": "variavel", "descricao": "carne fazenda", "valor": 49.39, "data": "2026-05-01", "categoria": "alimentacao"}, {"id": "9b1a4a45c8", "tipo": "variavel", "descricao": "cerveja clau", "valor": 78, "data": "2026-05-02", "categoria": "lazer"}, {"id": "b9e7f02a27", "tipo": "variavel", "descricao": "dipirona", "valor": 13.99, "data": "2026-05-02", "categoria": "saude"}, {"id": "5e3aa55767", "tipo": "variavel", "descricao": "tatico - diaria", "valor": 43.12, "data": "2026-05-02", "categoria": "alimentacao"}, {"id": "b9a1ff11d5", "tipo": "variavel", "descricao": "gasolina", "valor": 70, "data": "2026-05-02", "categoria": "transporte"}, {"id": "71d33a1bec", "tipo": "variavel", "descricao": "Manutenção carro", "valor": 389, "data": "2026-05-04", "categoria": "transporte"}, {"id": "96d8ab5784", "tipo": "variavel", "descricao": "concurso", "valor": 79.5, "data": "2026-04-05", "categoria": "outros"}, {"id": "c7f5a61e26", "tipo": "variavel", "descricao": "festa julia", "valor": 50, "data": "2026-04-05", "categoria": "lazer"}, {"id": "60d4883daa", "tipo": "variavel", "descricao": "Capinha e película", "valor": 40, "data": "2026-05-05", "categoria": "outros"}, {"id": "4ea6a215a4", "tipo": "variavel", "descricao": "Gasolina", "valor": 100, "data": "2026-05-05", "categoria": "transporte"}, {"id": "ed66df372c", "tipo": "variavel", "descricao": "Crepe feirinha", "valor": 36, "data": "2026-05-05", "categoria": "alimentacao"}, {"id": "6e227b7916", "tipo": "variavel", "descricao": "BK", "valor": 29.9, "data": "2026-05-06", "categoria": "alimentacao"}, {"id": "688c52cabd", "tipo": "variavel", "descricao": "Churrasco meu e bela", "valor": 69, "data": "2026-05-06", "categoria": "alimentacao"}, {"id": "c7e5921054", "tipo": "variavel", "descricao": "Almoço", "valor": 26.82, "data": "2026-05-07", "categoria": "alimentacao"}, {"id": "e2363d37b7", "tipo": "variavel", "descricao": "Unha", "valor": 57, "data": "2026-05-07", "categoria": "saude"}, {"id": "b99f9e09af", "tipo": "variavel", "descricao": "cerveja julia", "valor": 62.99, "data": "2026-05-09", "categoria": "lazer"}, {"id": "6d3badaeec", "tipo": "variavel", "descricao": "gelo", "valor": 6, "data": "2026-05-09", "categoria": "lazer"}, {"id": "dee2b98b81", "tipo": "variavel", "descricao": "gasolina", "valor": 100, "data": "2026-05-09", "categoria": "transporte"}, {"id": "12ce6fcce9", "tipo": "variavel", "descricao": "restaurante mãe", "valor": 255, "data": "2026-05-10", "categoria": "alimentacao"}, {"id": "04ff68e7c1", "tipo": "variavel", "descricao": "poke despedida", "valor": 188.19, "data": "2026-05-08", "categoria": "alimentacao"}, {"id": "3e1594f951", "tipo": "variavel", "descricao": "caixas", "valor": 124.97, "data": "2026-05-12", "categoria": "moradia"}, {"id": "0a3ee931e8", "tipo": "variavel", "descricao": "coca tatico", "valor": 3.89, "data": "2026-05-12", "categoria": "alimentacao"}, {"id": "ebf11eeffc", "tipo": "variavel", "descricao": "Subway", "valor": 25.4, "data": "2026-05-12", "categoria": "alimentacao"}, {"id": "4c37b645df", "tipo": "variavel", "descricao": "roupas fitness", "valor": 355.09, "data": "2026-05-13", "categoria": "outros"}, {"id": "a6d06d9911", "tipo": "variavel", "descricao": "pão padaria", "valor": 12.17, "data": "2026-05-12", "categoria": "moradia"}, {"id": "261378250d", "tipo": "variavel", "descricao": "Ingresso poliana", "valor": 240.92, "data": "2026-05-04", "categoria": "outros"}, {"id": "1145572ec9", "tipo": "variavel", "descricao": "Uber", "valor": 45.95, "data": "2026-05-04", "categoria": "transporte"}, {"id": "9f6918f770", "tipo": "variavel", "descricao": "Shein tetê", "valor": 658.97, "data": "2026-05-10", "categoria": "outros"}, {"id": "eb1f2579b8", "tipo": "variavel", "descricao": "Uber", "valor": 12.32, "data": "2026-05-17", "categoria": "transporte"}, {"id": "de562fa78a", "tipo": "variavel", "descricao": "Shein eu", "valor": 330.07, "data": "2026-05-20", "categoria": "outros"}, {"id": "737a19633d", "tipo": "variavel", "descricao": "Shein eu (1)", "valor": 318.94, "data": "2026-05-21", "categoria": "outros"}, {"id": "7fc93c8658", "tipo": "variavel", "descricao": "Coca", "valor": 9.99, "data": "2026-05-13", "categoria": "alimentacao"}, {"id": "a312f01634", "tipo": "variavel", "descricao": "Farmácia", "valor": 19.78, "data": "2026-05-13", "categoria": "saude"}, {"id": "cac798e3f2", "tipo": "variavel", "descricao": "Farmácia", "valor": 56.21, "data": "2026-05-16", "categoria": "saude"}, {"id": "bfd8cf6776", "tipo": "variavel", "descricao": "Farmácia", "valor": 48.24, "data": "2026-05-17", "categoria": "saude"}, {"id": "5b75a75760", "tipo": "variavel", "descricao": "Farmácia", "valor": 11, "data": "2026-05-17", "categoria": "saude"}, {"id": "96fa19e66e", "tipo": "variavel", "descricao": "Sobrancelha", "valor": 92.93, "data": "2026-05-22", "categoria": "saude"}, {"id": "c90c3cb3af", "tipo": "variavel", "descricao": "Unha", "valor": 30, "data": "2026-05-22", "categoria": "saude"}, {"id": "7c5fb849c7", "tipo": "variavel", "descricao": "Presente vitor copa", "valor": 17.9, "data": "2026-05-22", "categoria": "outros"}, {"id": "b3c57913db", "tipo": "variavel", "descricao": "Espetinho tia zélia", "valor": 43, "data": "2026-05-23", "categoria": "lazer"}, {"id": "bd78f52f19", "tipo": "variavel", "descricao": "Oficina - Vic", "valor": 20, "data": "2026-05-24", "categoria": "lazer"}, {"id": "70477f4375", "tipo": "variavel", "descricao": "Cachorro-quente", "valor": 44, "data": "2026-05-24", "categoria": "alimentacao"}, {"id": "9179068bc5", "tipo": "variavel", "descricao": "garrafas", "valor": 218.95, "data": "2026-05-24", "categoria": "outros"}, {"id": "249dd689ef", "tipo": "variavel", "descricao": "mercado", "valor": 60.86, "data": "2026-05-26", "categoria": "alimentacao"}, {"id": "fcb4f91a71", "tipo": "variavel", "descricao": "refri brenda", "valor": 20.5, "data": "2026-06-27", "categoria": "alimentacao"}, {"id": "8b0a9d502a", "tipo": "variavel", "descricao": "uber", "valor": 49.89, "data": "2026-05-25", "categoria": "transporte"}, {"id": "f74a8c48bd", "tipo": "variavel", "descricao": "Tatico verduras sushi", "valor": 61.25, "data": "2026-06-29", "categoria": "alimentacao"}, {"id": "0cbff4097e", "tipo": "variavel", "descricao": "Pepino Dona", "valor": 48.33, "data": "2026-06-29", "categoria": "alimentacao"}, {"id": "23f4bacc18", "tipo": "variavel", "descricao": "Almoço tatico", "valor": 27.12, "data": "2026-06-29", "categoria": "alimentacao"}, {"id": "0114016172", "tipo": "variavel", "descricao": "Doces", "valor": 35, "data": "2026-06-30", "categoria": "alimentacao"}, {"id": "0df858eb45", "tipo": "variavel", "descricao": "Farmácia", "valor": 24.15, "data": "2026-06-30", "categoria": "saude"}, {"id": "24871423a9", "tipo": "variavel", "descricao": "pizza", "valor": 68, "data": "2026-06-30", "categoria": "alimentacao"}, {"id": "78cbe88fcf", "tipo": "variavel", "descricao": "sushi sumô", "valor": 178.46, "data": "2026-06-01", "categoria": "alimentacao"}, {"id": "611f0d6ce4", "tipo": "variavel", "descricao": "refri pai", "valor": 10, "data": "2026-06-01", "categoria": "alimentacao"}, {"id": "be266ed220", "tipo": "variavel", "descricao": "tatico", "valor": 22.88, "data": "2026-06-02", "categoria": "alimentacao"}, {"id": "0739a1eadc", "tipo": "variavel", "descricao": "havaiana", "valor": 75, "data": "2026-06-02", "categoria": "outros"}, {"id": "c8317c76f2", "tipo": "variavel", "descricao": "blusa pai e mãe do vitor", "valor": 79.8, "data": "2026-06-04", "categoria": "outros"}, {"id": "f54e388ecb", "tipo": "variavel", "descricao": "carne churras lucas", "valor": 65.94, "data": "2026-06-04", "categoria": "lazer"}, {"id": "65197b9d13", "tipo": "variavel", "descricao": "almoço destilaria", "valor": 62, "data": "2026-06-05", "categoria": "alimentacao"}, {"id": "5efb371620", "tipo": "variavel", "descricao": "unha", "valor": 62, "data": "2026-06-05", "categoria": "saude"}, {"id": "8db9c09d17", "tipo": "variavel", "descricao": "MC Donalds", "valor": 63.8, "data": "2026-06-05", "categoria": "alimentacao"}, {"id": "65c8da32c1", "tipo": "variavel", "descricao": "Dipirona", "valor": 5.99, "data": "2026-06-06", "categoria": "saude"}, {"id": "5b17545761", "tipo": "variavel", "descricao": "albúm copa", "valor": 75, "data": "2026-06-06", "categoria": "outros"}, {"id": "c7aa0ebfae", "tipo": "variavel", "descricao": "cerveja tia larissa", "valor": 11.66, "data": "2026-06-06", "categoria": "lazer"}, {"id": "15ac5c994e", "tipo": "variavel", "descricao": "figurinhas", "valor": 70, "data": "2026-06-06", "categoria": "outros"}, {"id": "5fea1739db", "tipo": "variavel", "descricao": "chuleta", "valor": 98.45, "data": "2026-06-06", "categoria": "alimentacao"}, {"id": "30d4a7d215", "tipo": "variavel", "descricao": "master", "valor": 37.99, "data": "2026-06-07", "categoria": "alimentacao"}, {"id": "d73ba3bd19", "tipo": "variavel", "descricao": "Pano de prato", "valor": 25, "data": "2026-06-03", "categoria": "outros"}, {"id": "9304e49829", "tipo": "variavel", "descricao": "Carrefour", "valor": 61.71, "data": "2026-06-08", "categoria": "alimentacao"}, {"id": "9f64432d8b", "tipo": "variavel", "descricao": "tatico", "valor": 34.41, "data": "2026-06-09", "categoria": "alimentacao"}, {"id": "45fa177a16", "tipo": "variavel", "descricao": "gasolina", "valor": 50, "data": "2026-06-08", "categoria": "transporte"}, {"id": "5e9fd8d79f", "tipo": "variavel", "descricao": "jogo copa", "valor": 40, "data": "2026-06-10", "categoria": "outros"}, {"id": "39c31d1172", "tipo": "variavel", "descricao": "isabele", "valor": 200, "data": "2026-06-10", "categoria": "outros"}, {"id": "a96a11c544", "tipo": "variavel", "descricao": "Album vitor", "valor": 63, "data": "2026-06-10", "categoria": "outros"}, {"id": "dd72d2e160", "tipo": "variavel", "descricao": "subway", "valor": 84.19, "data": "2026-06-10", "categoria": "alimentacao"}, {"id": "7f6be3bb9d", "tipo": "variavel", "descricao": "coca", "valor": 10, "data": "2026-06-10", "categoria": "alimentacao"}, {"id": "3541145442", "tipo": "variavel", "descricao": "Ajuda sinal", "valor": 10, "data": "2026-06-11", "categoria": "outros"}, {"id": "c8f8fb5989", "tipo": "variavel", "descricao": "bolao", "valor": 10, "data": "2026-06-13", "categoria": "lazer"}, {"id": "2ed0bc7362", "tipo": "variavel", "descricao": "simples multa", "valor": 7.74, "data": "2026-06-11", "categoria": "outros"}, {"id": "762a41e5c6", "tipo": "variavel", "descricao": "Jantar dia dos namorados", "valor": 231.06, "data": "2026-06-12", "categoria": "alimentacao"}, {"id": "0c3df0e810", "tipo": "variavel", "descricao": "gasolina", "valor": 50, "data": "2026-06-12", "categoria": "transporte"}, {"id": "43b8027376", "tipo": "variavel", "descricao": "tatico", "valor": 26.98, "data": "2026-06-12", "categoria": "alimentacao"}, {"id": "e0331c6ae3", "tipo": "variavel", "descricao": "cerveja jogo", "valor": 42, "data": "2026-06-13", "categoria": "lazer"}, {"id": "5abdcc03d5", "tipo": "variavel", "descricao": "figurinhas", "valor": 70, "data": "2026-06-13", "categoria": "outros"}, {"id": "6535d776a9", "tipo": "variavel", "descricao": "almoço domingo", "valor": 85, "data": "2026-06-14", "categoria": "alimentacao"}, {"id": "b7e022e56d", "tipo": "variavel", "descricao": "festa junina", "valor": 15, "data": "2026-06-14", "categoria": "lazer"}, {"id": "84ef8e436e", "tipo": "variavel", "descricao": "tatico verduras", "valor": 53.13, "data": "2026-06-15", "categoria": "alimentacao"}, {"id": "82fe1877f9", "tipo": "variavel", "descricao": "Gasolina", "valor": 239.6, "data": "2026-06-15", "categoria": "transporte"}, {"id": "d3d13965e1", "tipo": "variavel", "descricao": "morango", "valor": 35, "data": "2026-06-15", "categoria": "alimentacao"}, {"id": "9d506598e4", "tipo": "variavel", "descricao": "sementes", "valor": 60, "data": "2026-06-15", "categoria": "alimentacao"}, {"id": "bfa4eaf673", "tipo": "variavel", "descricao": "Café home", "valor": 9, "data": "2026-06-17", "categoria": "alimentacao"}, {"id": "223ebcc6a7", "tipo": "variavel", "descricao": "Figurinhas renan", "valor": 84, "data": "2026-06-17", "categoria": "outros"}, {"id": "cdc4453ec9", "tipo": "variavel", "descricao": "roupa do brasil crianças", "valor": 140, "data": "2026-06-17", "categoria": "outros"}, {"id": "610f51de5c", "tipo": "variavel", "descricao": "bolão", "valor": 20, "data": "2026-06-19", "categoria": "outros"}, {"id": "a4d9f0b136", "tipo": "variavel", "descricao": "Eixão guito", "valor": 66, "data": "2026-07-28", "categoria": "outros"}, {"id": "0430ed415a", "tipo": "variavel", "descricao": "Pastel eixão", "valor": 19, "data": "2026-07-28", "categoria": "lazer"}, {"id": "af95fba83f", "tipo": "variavel", "descricao": "Speed", "valor": 43.89, "data": "2026-07-28", "categoria": "alimentacao"}, {"id": "34549466cf", "tipo": "variavel", "descricao": "Padaria", "valor": 12.99, "data": "2026-06-18", "categoria": "alimentacao"}, {"id": "10a09dfa34", "tipo": "variavel", "descricao": "Churrasquinho", "valor": 21, "data": "2026-06-19", "categoria": "alimentacao"}, {"id": "25dd3e146f", "tipo": "variavel", "descricao": "Cerveja jogo fluxo", "valor": 188.38, "data": "2026-06-19", "categoria": "lazer"}, {"id": "9966188b6d", "tipo": "variavel", "descricao": "Mercado mãe", "valor": 510.43, "data": "2026-06-19", "categoria": "alimentacao"}, {"id": "b8da6b1531", "tipo": "variavel", "descricao": "campanha comidas", "valor": 32, "data": "2026-06-20", "categoria": "alimentacao"}, {"id": "53675280dd", "tipo": "variavel", "descricao": "Padaria cachorro quente", "valor": 29.98, "data": "2026-06-21", "categoria": "alimentacao"}, {"id": "f7e19e0a6b", "tipo": "variavel", "descricao": "Sushi goumet", "valor": 14, "data": "2026-06-22", "categoria": "alimentacao"}, {"id": "5cc8a04b75", "tipo": "variavel", "descricao": "Biscoito mineiro", "valor": 19.9, "data": "2026-06-22", "categoria": "alimentacao"}, {"id": "715f36ca11", "tipo": "variavel", "descricao": "tatico", "valor": 25.45, "data": "2026-06-23", "categoria": "alimentacao"}, {"id": "5d8ccd8557", "tipo": "variavel", "descricao": "bar jogo tatico", "valor": 97.25, "data": "2026-06-24", "categoria": "alimentacao"}, {"id": "17d2567998", "tipo": "variavel", "descricao": "cerveja tia larissa", "valor": 79.27, "data": "2026-06-24", "categoria": "alimentacao"}, {"id": "83b8927d83", "tipo": "variavel", "descricao": "bombinha", "valor": 18.99, "data": "2026-06-27", "categoria": "saude"}, {"id": "32e9b8ad05", "tipo": "variavel", "descricao": "Uber sapatos sogra", "valor": 16.89, "data": "2026-07-30", "categoria": "transporte"}, {"id": "d450a49c25", "tipo": "variavel", "descricao": "Simpsons", "valor": 173, "data": "2026-07-29", "categoria": "lazer"}, {"id": "db2ca5bd83", "tipo": "variavel", "descricao": "Maramar", "valor": 120, "data": "2026-07-03", "categoria": "alimentacao"}, {"id": "8908d2acf0", "tipo": "variavel", "descricao": "Gasolina", "valor": 255.08, "data": "2026-07-02", "categoria": "transporte"}, {"id": "775b59bb9d", "tipo": "variavel", "descricao": "Gasolina", "valor": 70, "data": "2026-07-30", "categoria": "transporte"}, {"id": "978b1c683e", "tipo": "variavel", "descricao": "Almoço quarta", "valor": 36.08, "data": "2026-07-01", "categoria": "alimentacao"}, {"id": "9b0a2b8b0b", "tipo": "variavel", "descricao": "tapioca", "valor": 30, "data": "2026-07-01", "categoria": "alimentacao"}, {"id": "a76da08fc1", "tipo": "variavel", "descricao": "brownie", "valor": 14, "data": "2026-07-02", "categoria": "alimentacao"}, {"id": "8e87bfe3b7", "tipo": "variavel", "descricao": "almoço quinta", "valor": 39.91, "data": "2026-07-02", "categoria": "alimentacao"}, {"id": "43908cf993", "tipo": "variavel", "descricao": "unha", "valor": 62, "data": "2026-07-30", "categoria": "saude"}, {"id": "9bd436afcf", "tipo": "variavel", "descricao": "joias", "valor": 940.5, "data": "2026-06-30", "categoria": "saude"}, {"id": "714431d18a", "tipo": "variavel", "descricao": "Gordinhos", "valor": 35, "data": "2026-07-03", "categoria": "alimentacao"}, {"id": "33a4adbe6f", "tipo": "variavel", "descricao": "verduras", "valor": 34, "data": "2026-07-04", "categoria": "alimentacao"}, {"id": "85005c66fe", "tipo": "variavel", "descricao": "cerveja festa junina", "valor": 48, "data": "2026-07-04", "categoria": "lazer"}, {"id": "a4bdaa883b", "tipo": "variavel", "descricao": "cerveja jogo", "valor": 47.5, "data": "2026-07-05", "categoria": "lazer"}, {"id": "e84227d28d", "tipo": "variavel", "descricao": "coca", "valor": 11, "data": "2026-07-04", "categoria": "alimentacao"}, {"id": "c1acfd9232", "tipo": "variavel", "descricao": "carne jogo", "valor": 44.06, "data": "2026-07-05", "categoria": "lazer"}, {"id": "95522233b1", "tipo": "variavel", "descricao": "presente vitor", "valor": 242.96, "data": "2026-07-04", "categoria": "outros"}, {"id": "3d12b613a5", "tipo": "variavel", "descricao": "passagem", "valor": 1157, "data": "2026-06-30", "categoria": "lazer"}, {"id": "4e08fc4737", "tipo": "variavel", "descricao": "farmácia", "valor": 212.41, "data": "2026-07-06", "categoria": "saude"}, {"id": "b337e3a638", "tipo": "variavel", "descricao": "subway", "valor": 41.8, "data": "2026-07-06", "categoria": "alimentacao"}, {"id": "002f672a49", "tipo": "variavel", "descricao": "oculos", "valor": 220, "data": "2026-07-07", "categoria": "saude"}, {"id": "61bc6ac6c5", "tipo": "variavel", "descricao": "pelicula", "valor": 50, "data": "2026-07-07", "categoria": "outros"}, {"id": "4374d94174", "tipo": "variavel", "descricao": "doce", "valor": 22, "data": "2026-07-07", "categoria": "alimentacao"}, {"id": "2d30333057", "tipo": "variavel", "descricao": "coca", "valor": 3.29, "data": "2026-07-08", "categoria": "alimentacao"}, {"id": "53dc4db686", "tipo": "variavel", "descricao": "capinha", "valor": 20, "data": "2026-07-08", "categoria": "outros"}, {"id": "2b5a5a836a", "tipo": "variavel", "descricao": "Lentrecote", "valor": 496.06, "data": "2026-07-10", "categoria": "alimentacao"}, {"id": "7289658696", "tipo": "variavel", "descricao": "estacionamento shop", "valor": 10, "data": "2026-07-10", "categoria": "transporte"}, {"id": "ae1d561e50", "tipo": "variavel", "descricao": "boteco brahma", "valor": 58.7, "data": "2026-07-11", "categoria": "alimentacao"}, {"id": "b227a2a8db", "tipo": "variavel", "descricao": "fausto e manoel praça", "valor": 45.87, "data": "2026-07-11", "categoria": "alimentacao"}, {"id": "b402c12b1c", "tipo": "variavel", "descricao": "feijoada marmita", "valor": 29, "data": "2026-07-11", "categoria": "alimentacao"}, {"id": "18ca8f97f7", "tipo": "variavel", "descricao": "cerveja festa junina", "valor": 70.68, "data": "2026-07-11", "categoria": "alimentacao"}, {"id": "aec47eba4b", "tipo": "variavel", "descricao": "coca e gelo festa", "valor": 19, "data": "2026-07-11", "categoria": "alimentacao"}, {"id": "55850106f7", "tipo": "variavel", "descricao": "anfitriao burguer", "valor": 70.35, "data": "2026-07-12", "categoria": "alimentacao"}, {"id": "573247f557", "tipo": "variavel", "descricao": "Traíra miguel", "valor": 43.34, "data": "2026-07-14", "categoria": "alimentacao"}, {"id": "bf5e2db79d", "tipo": "variavel", "descricao": "almoço", "valor": 36.33, "data": "2026-07-15", "categoria": "alimentacao"}, {"id": "183f0cda51", "tipo": "variavel", "descricao": "brownie", "valor": 5, "data": "2026-07-15", "categoria": "alimentacao"}, {"id": "2edb81ed21", "tipo": "variavel", "descricao": "Tatico biscoito", "valor": 18.99, "data": "2026-07-16", "categoria": "alimentacao"}, {"id": "33815806ca", "tipo": "variavel", "descricao": "Pelicula", "valor": 20, "data": "2026-07-16", "categoria": "outros"}, {"id": "dfe6700c60", "tipo": "variavel", "descricao": "janta kamila", "valor": 56, "data": "2026-07-16", "categoria": "alimentacao"}, {"id": "d7f9d3f897", "tipo": "variavel", "descricao": "Master pão", "valor": 77.1, "data": "2026-07-17", "categoria": "alimentacao"}, {"id": "5cd7a19a66", "tipo": "variavel", "descricao": "Giraffas guito", "valor": 40.9, "data": "2026-07-17", "categoria": "alimentacao"}, {"id": "14b0fa06f8", "tipo": "variavel", "descricao": "Mania de churrasco", "valor": 58.8, "data": "2026-07-17", "categoria": "alimentacao"}, {"id": "dd53e58d88", "tipo": "variavel", "descricao": "estacionamento", "valor": 20, "data": "2026-07-17", "categoria": "outros"}, {"id": "fbd4049d22", "tipo": "variavel", "descricao": "injeção", "valor": 490, "data": "2026-07-18", "categoria": "saude"}, {"id": "64b599f827", "tipo": "variavel", "descricao": "padaria", "valor": 14.23, "data": "2026-07-18", "categoria": "alimentacao"}, {"id": "9445477067", "tipo": "variavel", "descricao": "ordinário", "valor": 210.75, "data": "2026-07-18", "categoria": "lazer"}, {"id": "c65e220164", "tipo": "variavel", "descricao": "gasolina", "valor": 261.36, "data": "2026-07-19", "categoria": "transporte"}, {"id": "9d5d1f09f6", "tipo": "variavel", "descricao": "Traíra", "valor": 54, "data": "2026-07-19", "categoria": "lazer"}, {"id": "ba20dd3334", "tipo": "variavel", "descricao": "MC", "valor": 52.5, "data": "2026-07-19", "categoria": "alimentacao"}, {"id": "42e14d2d4c", "tipo": "variavel", "descricao": "cadeira pai", "valor": 177.24, "data": "2026-07-17", "categoria": "saude"}, {"id": "5d99689486", "tipo": "variavel", "descricao": "biscoito mineiro", "valor": 56.3, "data": "2026-07-20", "categoria": "alimentacao"}, {"id": "91b71d4ae2", "tipo": "variavel", "descricao": "almoço", "valor": 32.28, "data": "2026-07-21", "categoria": "alimentacao"}, {"id": "b7de5c6df9", "tipo": "variavel", "descricao": "Alface", "valor": 26.96, "data": "2026-07-21", "categoria": "alimentacao"}, {"id": "4aed5bad2b", "tipo": "variavel", "descricao": "drogasil", "valor": 118.38, "data": "2026-07-21", "categoria": "saude"}, {"id": "93766a6d26", "tipo": "variavel", "descricao": "almoço", "valor": 100.54, "data": "2026-07-23", "categoria": "alimentacao"}, {"id": "f2462d3eed", "tipo": "variavel", "descricao": "tênis", "valor": 260.97, "data": "2026-07-23", "categoria": "outros"}, {"id": "7a41523127", "tipo": "variavel", "descricao": "mercado risoto", "valor": 62.91, "data": "2026-07-24", "categoria": "alimentacao"}, {"id": "259abaea0a", "tipo": "variavel", "descricao": "exame", "valor": 112.1, "data": "2026-08-28", "categoria": "saude"}, {"id": "959022ee1a", "tipo": "variavel", "descricao": "estacionamento", "valor": 30, "data": "2026-07-26", "categoria": "outros"}, {"id": "162f367b0b", "tipo": "variavel", "descricao": "coca", "valor": 11, "data": "2026-07-25", "categoria": "alimentacao"}, {"id": "5d0c571ab0", "tipo": "variavel", "descricao": "frango no pote cinema", "valor": 64.9, "data": "2026-07-25", "categoria": "alimentacao"}, {"id": "3cccdc5db4", "tipo": "variavel", "descricao": "coca cinema", "valor": 22, "data": "2026-07-25", "categoria": "alimentacao"}, {"id": "48afe76819", "tipo": "variavel", "descricao": "lava jato", "valor": 60, "data": "2026-07-26", "categoria": "transporte"}, {"id": "725266b4b4", "tipo": "variavel", "descricao": "ingresso cinema pais", "valor": 115.32, "data": "2026-08-02", "categoria": "outros"}, {"id": "490271c38a", "tipo": "variavel", "descricao": "uber", "valor": 14.99, "data": "2026-07-11", "categoria": "transporte"}, {"id": "1c82ac777a", "tipo": "variavel", "descricao": "mercado JJ", "valor": 100, "data": "2026-07-27", "categoria": "outros"}, {"id": "f6682e1d27", "tipo": "variavel", "descricao": "almoço", "valor": 38.63, "data": "2026-07-30", "categoria": "alimentacao"}, {"id": "158f2d6743", "tipo": "variavel", "descricao": "picolé", "valor": 7, "data": "2026-07-28", "categoria": "alimentacao"}, {"id": "c683ecc468", "tipo": "variavel", "descricao": "carne risoto", "valor": 50.39, "data": "2026-07-24", "categoria": "alimentacao"}, {"id": "75737236a9", "tipo": "variavel", "descricao": "salada", "valor": 158.15, "data": "2026-08-30", "categoria": "alimentacao"}, {"id": "77aca8f63e", "tipo": "variavel", "descricao": "unha", "valor": 62, "data": "2026-08-30", "categoria": "coisinhas-de-menina"}, {"id": "f522397f29", "tipo": "variavel", "descricao": "coca", "valor": 11, "data": "2026-08-30", "categoria": "alimentacao"}, {"id": "c839be44fd", "tipo": "variavel", "descricao": "uber oficina - casa", "valor": 19.93, "data": "2026-08-31", "categoria": "transporte"}, {"id": "bcf60850de", "tipo": "variavel", "descricao": "unha pé", "valor": 60, "data": "2026-08-31", "categoria": "coisinhas-de-menina"}, {"id": "c57838d66b", "tipo": "variavel", "descricao": "pastel taguacenter", "valor": 21, "data": "2026-08-01", "categoria": "alimentacao"}, {"id": "52d211f9ba", "tipo": "variavel", "descricao": "taguacenter leticia", "valor": 332.71, "data": "2026-08-01", "categoria": "outros"}, {"id": "f6772bf0bb", "tipo": "variavel", "descricao": "bebida vitor", "valor": 46, "data": "2026-08-01", "categoria": "lazer"}, {"id": "7aac581382", "tipo": "variavel", "descricao": "hamburguer cinema", "valor": 66.4, "data": "2026-08-02", "categoria": "alimentacao"}, {"id": "62a29d6c69", "tipo": "variavel", "descricao": "hamburguer bela", "valor": 69.4, "data": "2026-08-02", "categoria": "alimentacao"}, {"id": "1187e19642", "tipo": "variavel", "descricao": "padaria cachorro quente", "valor": 33.4, "data": "2026-08-02", "categoria": "alimentacao"}, {"id": "3437ef99db", "tipo": "variavel", "descricao": "almoço", "valor": 33.52, "data": "2026-08-03", "categoria": "alimentacao"}, {"id": "831eba77d4", "tipo": "variavel", "descricao": "brownie", "valor": 5, "data": "2026-08-03", "categoria": "alimentacao"}, {"id": "1245936a2e", "tipo": "variavel", "descricao": "coca psb", "valor": 8, "data": "2026-08-03", "categoria": "alimentacao"}, {"id": "1a4d422642", "tipo": "variavel", "descricao": "lembrancinhas", "valor": 302.08, "data": "2026-08-01", "categoria": "presente"}, {"id": "4b3030bbd0", "tipo": "variavel", "descricao": "joias", "valor": 299.37, "data": "2026-08-04", "categoria": "compras-pessoais"}, {"id": "10418b0343", "tipo": "variavel", "descricao": "carne kamila", "valor": 71.95, "data": "2026-08-04", "categoria": "alimentacao"}, {"id": "2799a4d77d", "tipo": "variavel", "descricao": "carne mãe", "valor": 393.1, "data": "2026-08-04", "categoria": "alimentacao"}, {"id": "9e6c3030e0", "tipo": "variavel", "descricao": "almoço", "valor": 34.81, "data": "2026-08-05", "categoria": "alimentacao"}, {"id": "a91ed1d75c", "tipo": "variavel", "descricao": "morango", "valor": 25, "data": "2026-08-05", "categoria": "alimentacao"}, {"id": "fe1805a8bf", "tipo": "variavel", "descricao": "estacionamento df plaza", "valor": 16, "data": "2026-08-05", "categoria": "transporte"}, {"id": "620a81a1c5", "tipo": "variavel", "descricao": "gasolina", "valor": 100, "data": "2026-08-05", "categoria": "transporte"}, {"id": "5fb3d6b0ed", "tipo": "variavel", "descricao": "garrafinha", "valor": 218.31, "data": "2026-08-07", "categoria": "compras-pessoais"}, {"id": "dae8e5cf0b", "tipo": "variavel", "descricao": "estacionamento verona", "valor": 20, "data": "2026-08-08", "categoria": "transporte"}, {"id": "f24d9f3cec", "tipo": "variavel", "descricao": "almoço pais", "valor": 200, "data": "2026-08-09", "categoria": "alimentacao"}, {"id": "418f84c800", "tipo": "variavel", "descricao": "metformina", "valor": 12.75, "data": "2026-08-10", "categoria": "saude"}, {"id": "d8d171d926", "tipo": "variavel", "descricao": "le contre", "valor": 109.96, "data": "2026-08-10", "categoria": "alimentacao"}, {"id": "a2fbd38a5f", "tipo": "variavel", "descricao": "estacionamento", "valor": 16, "data": "2026-08-10", "categoria": "transporte"}, {"id": "d74fac0bb7", "tipo": "variavel", "descricao": "tatico", "valor": 15.99, "data": "2026-08-11", "categoria": "alimentacao"}, {"id": "70f75e5318", "tipo": "variavel", "descricao": "gasolina", "valor": 235.6, "data": "2026-08-12", "categoria": "transporte"}, {"id": "3a4a7dbdbc", "tipo": "variavel", "descricao": "anti-alergico", "valor": 30.52, "data": "2026-08-12", "categoria": "saude"}, {"id": "e06f13956b", "tipo": "variavel", "descricao": "subway", "valor": 34, "data": "2026-08-13", "categoria": "alimentacao"}, {"id": "3115480477", "tipo": "variavel", "descricao": "coca", "valor": 9.49, "data": "2026-08-13", "categoria": "alimentacao"}, {"id": "2cf56efd2e", "tipo": "variavel", "descricao": "bolo larissa", "valor": 90.79, "data": "2026-08-13", "categoria": "outros"}, {"id": "68fde44743", "tipo": "variavel", "descricao": "cachorro quente", "valor": 22, "data": "2026-08-14", "categoria": "alimentacao"}, {"id": "dcf0829af8", "tipo": "variavel", "descricao": "unha", "valor": 180, "data": "2026-08-14", "categoria": "coisinhas-de-menina"}, {"id": "09f5978e0d", "tipo": "variavel", "descricao": "tatico lanche", "valor": 32.97, "data": "2026-08-16", "categoria": "alimentacao"}, {"id": "775d290883", "tipo": "variavel", "descricao": "MC Donalds", "valor": 68.9, "data": "2026-08-16", "categoria": "alimentacao"}, {"id": "fb69481fc7", "tipo": "variavel", "descricao": "Poke", "valor": 143.6, "data": "2026-08-16", "categoria": "alimentacao"}, {"id": "fc287def11", "tipo": "variavel", "descricao": "gasolina", "valor": 155.54, "data": "2026-08-16", "categoria": "transporte"}, {"id": "d762d23b88", "tipo": "variavel", "descricao": "almoço", "valor": 33, "data": "2026-08-17", "categoria": "alimentacao"}, {"id": "3f281506f5", "tipo": "variavel", "descricao": "tatico shampoo", "valor": 68.85, "data": "2026-08-18", "categoria": "alimentacao"}], "fixed": [{"id": "5c05d7647d", "descricao": "Claro", "valor": 49.9, "inicio": "2024-07", "categoria": "assinaturas"}, {"id": "e1a7137cf7", "descricao": "Plano de saúde", "valor": 906.34, "inicio": "2024-06", "categoria": "saude"}, {"id": "43155dd3f2", "descricao": "Sistema contabilidade", "valor": 291.33, "inicio": "2024-07", "categoria": "assinaturas"}, {"id": "90af75c0bb", "descricao": "Simples Nacional", "valor": 546, "inicio": "2024-11", "categoria": "imposto-pj"}, {"id": "b542ffc2d4", "descricao": "Smiles", "valor": 69.7, "inicio": "2025-03", "categoria": "assinaturas"}, {"id": "c36ba15f1d", "descricao": "Gympass", "valor": 134.44, "inicio": "2025-03", "categoria": "assinaturas"}, {"id": "3723421c46", "descricao": "Seguro carro", "valor": 103.15, "inicio": "2025-03", "categoria": "transporte"}, {"id": "5daad3f5ea", "descricao": "Netflix", "valor": 44.9, "inicio": "2025-04", "categoria": "assinaturas"}, {"id": "1bc843b58b", "descricao": "Cartão santander", "valor": 113.33, "inicio": "2025-10", "categoria": "assinaturas"}, {"id": "9e8f7575df", "descricao": "Clube Ifood", "valor": 4.95, "inicio": "2025-04", "categoria": "assinaturas"}, {"id": "7057f90d2c", "descricao": "Psicóloga", "valor": 200, "inicio": "2026-02", "categoria": "saude"}], "categories": [{"id": "coisinhas-de-menina", "label": "Coisinhas de menina", "color": "#d41166"}, {"id": "imposto-pj", "label": "Imposto PJ", "color": "#20b41d"}, {"id": "presente", "label": "Presente", "color": "#072eed"}, {"id": "compras-pessoais", "label": "Compras pessoais", "color": "#e67f0a"}], "debts": [{"id": "mt06okb3plz96e", "descricao": "Beatriz figurinhas", "credor": "Pix", "valorTotal": 178, "parcelas": 2, "inicio": "2026-07", "valorParcela": 89}, {"id": "mt06pck7gd7qht", "descricao": "roupa festa junina renner", "credor": "Smiles", "valorTotal": 299.8, "parcelas": 2, "inicio": "2026-07", "valorParcela": 149.9}, {"id": "mt06qbkm7i03iu", "descricao": "Monjas Isabele", "credor": "Caixa", "valorTotal": 1400, "parcelas": 3, "inicio": "2026-06", "valorParcela": 466.67}, {"id": "mt06qoza33jc55", "descricao": "Monjas", "credor": "Rico", "valorTotal": 1400, "parcelas": 3, "inicio": "2026-06", "valorParcela": 466.67}, {"id": "mt06rq5im1q233", "descricao": "Grancursos", "credor": "Rico", "valorTotal": 1618.92, "parcelas": 12, "inicio": "2026-05", "valorParcela": 134.91}, {"id": "mt06sxz1zrvzn5", "descricao": "Colchão Bianca", "credor": "Smiles Vitor", "valorTotal": 945, "parcelas": 12, "inicio": "2026-05", "valorParcela": 78.75}, {"id": "mt06txylylktd7", "descricao": "Colchão Vitor", "credor": "Smiles Vitor", "valorTotal": 250, "parcelas": 5, "inicio": "2026-05", "valorParcela": 50}, {"id": "mt06vct0gtcz7j", "descricao": "Roupas Tik Tok", "credor": "Rico", "valorTotal": 414.66, "parcelas": 6, "inicio": "2026-05", "valorParcela": 69.11}, {"id": "mt06vz443h4i08", "descricao": "Tenis", "credor": "Smiles", "valorTotal": 524.98, "parcelas": 6, "inicio": "2026-03", "valorParcela": 87.5}, {"id": "mt06xbscfu347i", "descricao": "Apartamento", "credor": "Conbral", "valorTotal": 54000, "parcelas": 36, "inicio": "2025-01", "valorParcela": 1500}, {"id": "mt06yvattk8bc6", "descricao": "Som carro", "credor": "Smiles", "valorTotal": 1670, "parcelas": 5, "inicio": "2026-08", "valorParcela": 334}, {"id": "mt071owrjvoozj", "descricao": "Lava-louças", "credor": "Kamila", "valorTotal": 634, "parcelas": 12, "inicio": "2026-08", "valorParcela": 52.83}, {"id": "mt0729m3c70490", "descricao": "Conserto carro", "credor": "Smiles", "valorTotal": 1267.95, "parcelas": 3, "inicio": "2026-08", "valorParcela": 422.65}], "investments": []};
+
+  var state = loadState();
+  var today = new Date();
+  var viewDate = { y: today.getFullYear(), m: today.getMonth() }; // m: 0-11
+  var currentTab = "resumo";
+
+  function loadState() {
+    var result = null;
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.transactions) && Array.isArray(parsed.fixed)) {
+          result = parsed;
+        }
+      }
+    } catch (e) { /* ignore corrupt data */ }
+    // Primeira vez abrindo o app neste navegador: começa com os dados importados do Notion.
+    if (!result) result = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    if (!Array.isArray(result.categories)) result.categories = [];
+    if (!Array.isArray(result.debts)) result.debts = [];
+    if (!Array.isArray(result.investments)) result.investments = [];
+    return result;
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    schedulePush();
+  }
+
+  // ---------- Sincronização entre aparelhos (Google Apps Script) ----------
+  var SYNC_KEY = "financas_pessoais_sync_v1";
+  var pushTimer = null;
+  var syncing = false;
+
+  function getSyncConfig() {
+    try {
+      var raw = localStorage.getItem(SYNC_KEY);
+      if (!raw) return null;
+      var cfg = JSON.parse(raw);
+      if (cfg && cfg.url && cfg.secret) return cfg;
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+  function saveSyncConfig(cfg) {
+    localStorage.setItem(SYNC_KEY, JSON.stringify(cfg));
+  }
+  function clearSyncConfig() {
+    localStorage.removeItem(SYNC_KEY);
+  }
+  function setSyncStatus(msg) {
+    var el = document.getElementById("syncStatus");
+    if (el) el.textContent = msg;
+  }
+  function syncConfigSummary() {
+    var cfg = getSyncConfig();
+    if (!cfg) return "Sincronização desligada — os dados ficam só neste aparelho.";
+    var when = cfg.lastSync ? new Date(cfg.lastSync).toLocaleString("pt-BR") : "nunca";
+    return "Sincronização ativa. Última sincronização: " + when + ".";
+  }
+
+  function schedulePush() {
+    var cfg = getSyncConfig();
+    if (!cfg) return;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(pushToCloud, 900);
+  }
+
+  function pushToCloud() {
+    var cfg = getSyncConfig();
+    if (!cfg) return;
+    syncing = true;
+    setSyncStatus("Sincronizando...");
+    fetch(cfg.url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: cfg.secret, data: state })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (resp) {
+        syncing = false;
+        if (resp && resp.ok) {
+          cfg.lastSync = Date.now();
+          saveSyncConfig(cfg);
+          setSyncStatus(syncConfigSummary());
+        } else {
+          setSyncStatus("Erro ao enviar para a nuvem: " + (resp && resp.error ? resp.error : "resposta inesperada") + ".");
+        }
+      })
+      .catch(function (err) {
+        syncing = false;
+        setSyncStatus("Não foi possível conectar à nuvem agora (verifique sua internet ou a URL). Os dados continuam salvos neste aparelho.");
+      });
+  }
+
+  function pullFromCloud(showToasts) {
+    var cfg = getSyncConfig();
+    if (!cfg) return;
+    setSyncStatus("Buscando dados mais recentes...");
+    fetch(cfg.url + "?secret=" + encodeURIComponent(cfg.secret))
+      .then(function (r) { return r.json(); })
+      .then(function (remote) {
+        if (!remote || remote.error) {
+          setSyncStatus("Erro ao buscar da nuvem" + (remote && remote.error ? ": " + remote.error : "") + ".");
+          if (showToasts) showToast("Não foi possível sincronizar.");
+          return;
+        }
+        if (!Array.isArray(remote.transactions)) {
+          // planilha ainda vazia (primeira sincronização) — envia o que já temos localmente
+          pushToCloud();
+          return;
+        }
+        if (!Array.isArray(remote.categories)) remote.categories = [];
+        if (!Array.isArray(remote.debts)) remote.debts = [];
+        if (!Array.isArray(remote.investments)) remote.investments = [];
+        state = remote;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        cfg.lastSync = Date.now();
+        saveSyncConfig(cfg);
+        setSyncStatus(syncConfigSummary());
+        refreshCategorySelects();
+        renderAll();
+        if (showToasts) showToast("Dados atualizados da nuvem.");
+      })
+      .catch(function (err) {
+        setSyncStatus("Não foi possível conectar à nuvem agora (verifique sua internet ou a URL). Usando os dados salvos neste aparelho.");
+        if (showToasts) showToast("Sem conexão com a nuvem.");
+      });
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function monthKey(y, m) { return y + "-" + String(m + 1).padStart(2, "0"); }
+
+  function monthsBetween(fromYM, toYM) {
+    var fp = fromYM.split("-").map(Number), tp = toYM.split("-").map(Number);
+    return (tp[0] - fp[0]) * 12 + (tp[1] - fp[1]);
+  }
+  function debtInfoForMonth(debt, y, m) {
+    var idx = monthsBetween(debt.inicio, monthKey(y, m)); // 0-based installment index for this month
+    if (idx < 0) return { status: "futura", parcelaAtual: null, active: false };
+    if (idx >= debt.parcelas) return { status: "finalizada", parcelaAtual: null, active: false };
+    return { status: "ativa", parcelaAtual: idx + 1, active: true };
+  }
+  function activeDebtsForMonth(y, m) {
+    return state.debts
+      .map(function (d) { return Object.assign({}, d, debtInfoForMonth(d, y, m)); })
+      .filter(function (d) { return d.active; });
+  }
+
+  function fmtMoney(v) {
+    return (v < 0 ? "-" : "") + "R$ " + Math.abs(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function parseValor(str) {
+    if (!str) return NaN;
+    var clean = String(str).trim().replace(/\s/g, "").replace(/\./g, "").replace(",", ".");
+    return parseFloat(clean);
+  }
+
+  var MONTH_NAMES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove("show"); }, 1800);
+  }
+
+  // ---------- Theme ----------
+  function applyTheme() {
+    var saved = localStorage.getItem(THEME_KEY);
+    if (saved === "light" || saved === "dark") {
+      document.documentElement.setAttribute("data-theme", saved);
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+  }
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var cur = localStorage.getItem(THEME_KEY);
+    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next;
+    if (!cur) next = prefersDark ? "light" : "dark";
+    else if (cur === "dark") next = "light";
+    else next = "dark";
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme();
+  });
+  applyTheme();
+
+  // ---------- Tabs ----------
+  var tabButtons = document.querySelectorAll("nav.tabs button");
+  tabButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      currentTab = btn.getAttribute("data-view");
+      tabButtons.forEach(function (b) { b.classList.toggle("active", b === btn); });
+      document.querySelectorAll("main .view").forEach(function (v) {
+        v.classList.toggle("active", v.id === "view-" + currentTab);
+      });
+      renderAll();
+    });
+  });
+
+  // ---------- Month nav ----------
+  document.getElementById("prevMonth").addEventListener("click", function () {
+    viewDate.m--; if (viewDate.m < 0) { viewDate.m = 11; viewDate.y--; }
+    renderAll();
+  });
+  document.getElementById("nextMonth").addEventListener("click", function () {
+    viewDate.m++; if (viewDate.m > 11) { viewDate.m = 0; viewDate.y++; }
+    renderAll();
+  });
+
+  function renderMonthLabel() {
+    var txt = MONTH_NAMES[viewDate.m] + " de " + viewDate.y;
+    document.getElementById("monthLabel").textContent = txt.charAt(0).toUpperCase() + txt.slice(1);
+  }
+
+  // ---------- Category selects ----------
+  function fillCategorySelect(sel) {
+    var prev = sel.value;
+    sel.innerHTML = "";
+    getAllCategories().forEach(function (c) {
+      var opt = document.createElement("option");
+      opt.value = c.id; opt.textContent = c.label;
+      sel.appendChild(opt);
+    });
+    if (prev && getAllCategories().some(function (c) { return c.id === prev; })) sel.value = prev;
+  }
+  function refreshCategorySelects() {
+    fillCategorySelect(document.getElementById("txCategoria"));
+    fillCategorySelect(document.getElementById("fxCategoria"));
+  }
+  refreshCategorySelects();
+
+  // ---------- Data helpers ----------
+  function activeFixedForMonth(y, m) {
+    var key = monthKey(y, m);
+    return state.fixed.filter(function (f) { return f.inicio <= key; });
+  }
+  function transactionsForMonth(y, m) {
+    var key = monthKey(y, m);
+    return state.transactions.filter(function (t) { return t.data.slice(0, 7) === key; });
+  }
+  function computeMonthTotals(y, m) {
+    var fixed = activeFixedForMonth(y, m);
+    var txs = transactionsForMonth(y, m);
+    var debts = activeDebtsForMonth(y, m);
+    var totalFixo = fixed.reduce(function (s, f) { return s + f.valor; }, 0);
+    var totalReceita = txs.filter(function (t) { return t.tipo === "receita"; }).reduce(function (s, t) { return s + t.valor; }, 0);
+    var totalVariavel = txs.filter(function (t) { return t.tipo === "variavel"; }).reduce(function (s, t) { return s + t.valor; }, 0);
+    var totalDividas = debts.reduce(function (s, d) { return s + d.valorParcela; }, 0);
+    var saldo = totalReceita - totalFixo - totalVariavel - totalDividas;
+    var byCategory = {};
+    fixed.forEach(function (f) { byCategory[f.categoria] = (byCategory[f.categoria] || 0) + f.valor; });
+    txs.filter(function (t) { return t.tipo === "variavel"; }).forEach(function (t) {
+      byCategory[t.categoria] = (byCategory[t.categoria] || 0) + t.valor;
+    });
+    return { totalFixo: totalFixo, totalReceita: totalReceita, totalVariavel: totalVariavel, totalDividas: totalDividas, saldo: saldo, byCategory: byCategory };
+  }
+
+  // ---------- Render: Resumo ----------
+  function renderResumo() {
+    document.getElementById("detailPanel").style.display = "none";
+    var totals = computeMonthTotals(viewDate.y, viewDate.m);
+    document.getElementById("statReceita").textContent = fmtMoney(totals.totalReceita);
+    document.getElementById("statFixos").textContent = fmtMoney(totals.totalFixo);
+    document.getElementById("statVariaveis").textContent = fmtMoney(totals.totalVariavel);
+    document.getElementById("statDividas").textContent = fmtMoney(totals.totalDividas);
+    var saldoEl = document.getElementById("statSaldo");
+    saldoEl.textContent = fmtMoney(totals.saldo);
+    var card = document.getElementById("cardSaldo");
+    card.classList.remove("saldo-good", "saldo-bad");
+    card.classList.add(totals.saldo >= 0 ? "saldo-good" : "saldo-bad");
+
+    renderChart(totals.byCategory);
+    renderHistory();
+  }
+
+  function renderChart(byCategory) {
+    var area = document.getElementById("chartArea");
+    var entries = Object.keys(byCategory)
+      .map(function (id) { return { id: id, valor: byCategory[id] }; })
+      .filter(function (e) { return e.valor > 0; })
+      .sort(function (a, b) {
+        var all = getAllCategories().map(function (c) { return c.id; });
+        return all.indexOf(a.id) - all.indexOf(b.id);
+      });
+    var total = entries.reduce(function (s, e) { return s + e.valor; }, 0);
+
+    if (total <= 0) {
+      area.innerHTML = '<p class="empty-note">Sem gastos registrados neste mês ainda.</p>';
+      return;
+    }
+
+    var gradientParts = [];
+    var acc = 0;
+    entries.forEach(function (e) {
+      var pct = (e.valor / total) * 100;
+      var start = acc;
+      var end = acc + pct;
+      gradientParts.push(categoryColor(e.id) + " " + start.toFixed(2) + "% " + end.toFixed(2) + "%");
+      acc = end;
+    });
+
+    var legendHTML = entries.map(function (e) {
+      var pct = (e.valor / total) * 100;
+      return '<li data-cat="' + e.id + '"><span class="swatch" style="background:' + categoryColor(e.id) + '"></span>' +
+        '<span class="name">' + catLabel(e.id) + '</span>' +
+        '<span class="pct">' + pct.toFixed(0) + '%</span>' +
+        '<span class="amt">' + fmtMoney(e.valor) + '</span></li>';
+    }).join("");
+
+    area.innerHTML =
+      '<div class="donut-wrap">' +
+        '<div class="donut" style="background:conic-gradient(' + gradientParts.join(",") + ')">' +
+          '<div class="donut-hole"><div class="total">' + fmtMoney(total) + '</div><div class="total-label">total gasto</div></div>' +
+        '</div>' +
+        '<ul class="legend">' + legendHTML + '</ul>' +
+      '</div>';
+  }
+
+  function renderHistory() {
+    var tbody = document.querySelector("#historyTable tbody");
+    tbody.innerHTML = "";
+    for (var i = 5; i >= 0; i--) {
+      var d = new Date(viewDate.y, viewDate.m - i, 1);
+      var y = d.getFullYear(), m = d.getMonth();
+      var t = computeMonthTotals(y, m);
+      var tr = document.createElement("tr");
+      var label = MONTH_NAMES[m].slice(0, 3) + "/" + String(y).slice(2);
+      tr.innerHTML =
+        "<td>" + label + "</td>" +
+        "<td>" + fmtMoney(t.totalReceita) + "</td>" +
+        "<td>" + fmtMoney(t.totalFixo) + "</td>" +
+        "<td>" + fmtMoney(t.totalVariavel) + "</td>" +
+        "<td>" + fmtMoney(t.totalDividas) + "</td>" +
+        '<td class="' + (t.saldo >= 0 ? "saldo-good" : "saldo-bad") + '">' + fmtMoney(t.saldo) + "</td>";
+      tbody.appendChild(tr);
+    }
+  }
+
+  // ---------- Detail drill-down (cards + legend) ----------
+  function openDetail(title, entries) {
+    var panel = document.getElementById("detailPanel");
+    var total = entries.reduce(function (s, e) { return s + (e.sinal === "-" ? -e.valor : e.valor); }, 0);
+    document.getElementById("detailTitle").textContent = title;
+    var totalEl = document.getElementById("detailTotal");
+    totalEl.textContent = fmtMoney(total);
+    totalEl.style.color = total < 0 ? "var(--critical)" : (entries.length && entries[0].sinal === "+" ? "var(--good)" : "var(--text-primary)");
+
+    var list = document.getElementById("detailList");
+    list.innerHTML = "";
+    document.getElementById("detailEmpty").style.display = entries.length ? "none" : "block";
+    entries
+      .slice()
+      .sort(function (a, b) { return b.valor - a.valor; })
+      .forEach(function (e) {
+        var li = document.createElement("li");
+        li.innerHTML =
+          '<span class="tx-dot" style="background:' + e.dot + '"></span>' +
+          '<span class="tx-info"><div class="tx-desc">' + escapeHTML(e.descricao) + '</div>' +
+          '<div class="tx-meta">' + escapeHTML(e.meta) + '</div></span>' +
+          '<span class="tx-value">' + (e.sinal || "") + fmtMoney(e.valor) + '</span>';
+        list.appendChild(li);
+      });
+
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.getElementById("detailClose").addEventListener("click", function () {
+    document.getElementById("detailPanel").style.display = "none";
+  });
+
+  function detailForCard(kind) {
+    var fixed = activeFixedForMonth(viewDate.y, viewDate.m);
+    var txs = transactionsForMonth(viewDate.y, viewDate.m);
+    if (kind === "receita") {
+      var items = txs.filter(function (t) { return t.tipo === "receita"; }).map(function (t) {
+        return { descricao: t.descricao, valor: t.valor, meta: t.data.split("-").reverse().slice(0, 2).join("/"), dot: "var(--good)", sinal: "+" };
+      });
+      openDetail("Receitas — " + monthLabelText(), items);
+    } else if (kind === "fixo") {
+      var items2 = fixed.map(function (f) {
+        return { descricao: f.descricao, valor: f.valor, meta: catLabel(f.categoria), dot: categoryColor(f.categoria), sinal: "-" };
+      });
+      openDetail("Gastos fixos — " + monthLabelText(), items2);
+    } else if (kind === "variavel") {
+      var items3 = txs.filter(function (t) { return t.tipo === "variavel"; }).map(function (t) {
+        return { descricao: t.descricao, valor: t.valor, meta: catLabel(t.categoria) + " · " + t.data.split("-").reverse().slice(0, 2).join("/"), dot: categoryColor(t.categoria), sinal: "-" };
+      });
+      openDetail("Gastos variáveis — " + monthLabelText(), items3);
+    } else if (kind === "dividas") {
+      var debts = activeDebtsForMonth(viewDate.y, viewDate.m);
+      var items4 = debts.map(function (d) {
+        return { descricao: d.descricao, valor: d.valorParcela, meta: "Parcela " + d.parcelaAtual + " de " + d.parcelas + (d.credor ? " · " + d.credor : ""), dot: "var(--c-outros)", sinal: "-" };
+      });
+      openDetail("Dívidas — " + monthLabelText(), items4);
+    }
+  }
+
+  function detailForCategory(catId) {
+    var fixed = activeFixedForMonth(viewDate.y, viewDate.m).filter(function (f) { return f.categoria === catId; });
+    var txs = transactionsForMonth(viewDate.y, viewDate.m).filter(function (t) { return t.tipo === "variavel" && t.categoria === catId; });
+    var items = fixed.map(function (f) {
+      return { descricao: f.descricao, valor: f.valor, meta: "Gasto fixo", dot: categoryColor(catId), sinal: "-" };
+    }).concat(txs.map(function (t) {
+      return { descricao: t.descricao, valor: t.valor, meta: t.data.split("-").reverse().slice(0, 2).join("/"), dot: categoryColor(catId), sinal: "-" };
+    }));
+    openDetail(catLabel(catId) + " — " + monthLabelText(), items);
+  }
+
+  function monthLabelText() {
+    return document.getElementById("monthLabel").textContent;
+  }
+
+  document.getElementById("cardReceita").addEventListener("click", function () { detailForCard("receita"); });
+  document.getElementById("cardFixos").addEventListener("click", function () { detailForCard("fixo"); });
+  document.getElementById("cardVariaveis").addEventListener("click", function () { detailForCard("variavel"); });
+  document.getElementById("cardDividas").addEventListener("click", function () { detailForCard("dividas"); });
+
+  document.getElementById("chartArea").addEventListener("click", function (e) {
+    var li = e.target.closest("li[data-cat]");
+    if (!li) return;
+    detailForCategory(li.getAttribute("data-cat"));
+  });
+
+  // ---------- Render: Lançamentos ----------
+  var txSegType = "variavel";
+  document.getElementById("txTypeSeg").addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    txSegType = btn.getAttribute("data-type");
+    this.querySelectorAll("button").forEach(function (b) { b.classList.toggle("active", b === btn); });
+    document.getElementById("txCategoriaWrap").style.display = txSegType === "receita" ? "none" : "flex";
+  });
+
+  document.getElementById("txData").valueAsDate = today;
+
+  var editingTxId = null;
+
+  function setTxSegType(type) {
+    txSegType = type;
+    document.querySelectorAll("#txTypeSeg button").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-type") === type);
+    });
+    document.getElementById("txCategoriaWrap").style.display = type === "receita" ? "none" : "flex";
+  }
+
+  function resetTxForm() {
+    editingTxId = null;
+    document.getElementById("txForm").reset();
+    document.getElementById("txData").valueAsDate = today;
+    setTxSegType("variavel");
+    document.getElementById("txSubmitBtn").textContent = "Adicionar";
+    document.getElementById("txEditBanner").classList.remove("show");
+  }
+
+  document.getElementById("txCancelEdit").addEventListener("click", resetTxForm);
+
+  document.getElementById("txForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var desc = document.getElementById("txDesc").value.trim();
+    var valor = parseValor(document.getElementById("txValor").value);
+    var data = document.getElementById("txData").value;
+    var categoria = document.getElementById("txCategoria").value;
+    if (!desc || isNaN(valor) || valor <= 0 || !data) {
+      showToast("Preencha os campos corretamente.");
+      return;
+    }
+    if (editingTxId) {
+      var existing = state.transactions.find(function (t) { return t.id === editingTxId; });
+      if (existing) {
+        existing.tipo = txSegType; existing.descricao = desc; existing.valor = valor;
+        existing.data = data; existing.categoria = txSegType === "receita" ? null : categoria;
+      }
+      showToast("Lançamento atualizado.");
+    } else {
+      state.transactions.push({
+        id: uid(), tipo: txSegType, descricao: desc, valor: valor, data: data,
+        categoria: txSegType === "receita" ? null : categoria
+      });
+      showToast("Lançamento adicionado.");
+    }
+    saveState();
+    resetTxForm();
+    // jump view to the month of the entry
+    var parts = data.split("-");
+    viewDate.y = parseInt(parts[0], 10);
+    viewDate.m = parseInt(parts[1], 10) - 1;
+    renderAll();
+  });
+
+  function renderLancamentos() {
+    var list = document.getElementById("txList");
+    var txs = transactionsForMonth(viewDate.y, viewDate.m).slice().sort(function (a, b) { return b.data.localeCompare(a.data); });
+    list.innerHTML = "";
+    document.getElementById("txEmpty").style.display = txs.length ? "none" : "block";
+    txs.forEach(function (t) {
+      var li = document.createElement("li");
+      var dotColor = t.tipo === "receita" ? "var(--good)" : categoryColor(t.categoria);
+      var metaText = t.tipo === "receita" ? "Receita" : catLabel(t.categoria);
+      var dateFmt = t.data.split("-").reverse().slice(0, 2).join("/");
+      li.innerHTML =
+        '<span class="tx-dot" style="background:' + dotColor + '"></span>' +
+        '<span class="tx-info" data-edit="' + t.id + '"><div class="tx-desc">' + escapeHTML(t.descricao) + '</div>' +
+        '<div class="tx-meta">' + metaText + " · " + dateFmt + '</div></span>' +
+        '<span class="tx-value ' + (t.tipo === "receita" ? "receita" : "") + '">' + (t.tipo === "receita" ? "+" : "-") + fmtMoney(t.valor) + '</span>' +
+        '<span class="tx-actions"><button class="icon-btn" data-del="' + t.id + '" title="Excluir">🗑️</button></span>';
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("txList").addEventListener("click", function (e) {
+    var delBtn = e.target.closest("button[data-del]");
+    if (delBtn) {
+      var id = delBtn.getAttribute("data-del");
+      state.transactions = state.transactions.filter(function (t) { return t.id !== id; });
+      saveState();
+      if (editingTxId === id) resetTxForm();
+      renderAll();
+      showToast("Lançamento removido.");
+      return;
+    }
+    var infoEl = e.target.closest("[data-edit]");
+    if (infoEl) {
+      var txId = infoEl.getAttribute("data-edit");
+      var t = state.transactions.find(function (x) { return x.id === txId; });
+      if (!t) return;
+      editingTxId = txId;
+      setTxSegType(t.tipo);
+      document.getElementById("txDesc").value = t.descricao;
+      document.getElementById("txValor").value = t.valor.toFixed(2).replace(".", ",");
+      document.getElementById("txData").value = t.data;
+      if (t.tipo !== "receita") document.getElementById("txCategoria").value = t.categoria || "outros";
+      document.getElementById("txSubmitBtn").textContent = "Salvar alterações";
+      document.getElementById("txEditBanner").classList.add("show");
+      document.getElementById("txDesc").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  function escapeHTML(s) {
+    var div = document.createElement("div");
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  // ---------- Render: Fixos ----------
+  (function () {
+    var d = new Date();
+    document.getElementById("fxInicio").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  })();
+
+  var editingFxId = null;
+
+  function resetFxForm() {
+    editingFxId = null;
+    document.getElementById("fixedForm").reset();
+    var d = new Date();
+    document.getElementById("fxInicio").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    document.getElementById("fxSubmitBtn").textContent = "Adicionar gasto fixo";
+    document.getElementById("fxEditBanner").classList.remove("show");
+  }
+
+  document.getElementById("fxCancelEdit").addEventListener("click", resetFxForm);
+
+  document.getElementById("fixedForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var desc = document.getElementById("fxDesc").value.trim();
+    var valor = parseValor(document.getElementById("fxValor").value);
+    var inicio = document.getElementById("fxInicio").value;
+    var categoria = document.getElementById("fxCategoria").value;
+    if (!desc || isNaN(valor) || valor <= 0 || !inicio) {
+      showToast("Preencha os campos corretamente.");
+      return;
+    }
+    if (editingFxId) {
+      var existing = state.fixed.find(function (f) { return f.id === editingFxId; });
+      if (existing) {
+        existing.descricao = desc; existing.valor = valor; existing.inicio = inicio; existing.categoria = categoria;
+      }
+      showToast("Gasto fixo atualizado.");
+    } else {
+      state.fixed.push({ id: uid(), descricao: desc, valor: valor, inicio: inicio, categoria: categoria });
+      showToast("Gasto fixo adicionado.");
+    }
+    saveState();
+    resetFxForm();
+    renderAll();
+  });
+
+  function renderFixos() {
+    var list = document.getElementById("fixedList");
+    var items = state.fixed.slice().sort(function (a, b) { return a.inicio.localeCompare(b.inicio); });
+    list.innerHTML = "";
+    document.getElementById("fixedEmpty").style.display = items.length ? "none" : "block";
+    items.forEach(function (f) {
+      var li = document.createElement("li");
+      var startFmt = f.inicio.split("-").reverse().join("/");
+      li.innerHTML =
+        '<span class="tx-dot" style="background:' + categoryColor(f.categoria) + '"></span>' +
+        '<span class="tx-info" data-editfx="' + f.id + '"><div class="tx-desc">' + escapeHTML(f.descricao) + '</div>' +
+        '<div class="tx-meta">' + catLabel(f.categoria) + " · desde " + startFmt + '</div></span>' +
+        '<span class="tx-value">' + fmtMoney(f.valor) + '</span>' +
+        '<span class="tx-actions"><button class="icon-btn" data-delfx="' + f.id + '" title="Excluir">🗑️</button></span>';
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("fixedList").addEventListener("click", function (e) {
+    var delBtn = e.target.closest("button[data-delfx]");
+    if (delBtn) {
+      var id = delBtn.getAttribute("data-delfx");
+      state.fixed = state.fixed.filter(function (f) { return f.id !== id; });
+      saveState();
+      if (editingFxId === id) resetFxForm();
+      renderAll();
+      showToast("Gasto fixo removido.");
+      return;
+    }
+    var infoEl = e.target.closest("[data-editfx]");
+    if (infoEl) {
+      var fxId = infoEl.getAttribute("data-editfx");
+      var f = state.fixed.find(function (x) { return x.id === fxId; });
+      if (!f) return;
+      editingFxId = fxId;
+      document.getElementById("fxDesc").value = f.descricao;
+      document.getElementById("fxValor").value = f.valor.toFixed(2).replace(".", ",");
+      document.getElementById("fxInicio").value = f.inicio;
+      document.getElementById("fxCategoria").value = f.categoria || "outros";
+      document.getElementById("fxSubmitBtn").textContent = "Salvar alterações";
+      document.getElementById("fxEditBanner").classList.add("show");
+      document.getElementById("fxDesc").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  // ---------- Render: Dívidas ----------
+  (function () {
+    var d = new Date();
+    document.getElementById("debtInicio").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  })();
+
+  var editingDebtId = null;
+
+  function updateDebtPreview() {
+    var total = parseValor(document.getElementById("debtValorTotal").value);
+    var parcelas = parseInt(document.getElementById("debtParcelas").value, 10);
+    var preview = document.getElementById("debtPreview");
+    if (!isNaN(total) && total > 0 && parcelas > 0) {
+      preview.innerHTML = "Valor da parcela: <b>" + fmtMoney(total / parcelas) + "</b> por mês, durante " + parcelas + " meses.";
+    } else {
+      preview.textContent = "";
+    }
+  }
+  document.getElementById("debtValorTotal").addEventListener("input", updateDebtPreview);
+  document.getElementById("debtParcelas").addEventListener("input", updateDebtPreview);
+
+  function resetDebtForm() {
+    editingDebtId = null;
+    document.getElementById("debtForm").reset();
+    var d = new Date();
+    document.getElementById("debtInicio").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    document.getElementById("debtSubmitBtn").textContent = "Adicionar dívida";
+    document.getElementById("debtEditBanner").classList.remove("show");
+    document.getElementById("debtPreview").textContent = "";
+  }
+
+  document.getElementById("debtCancelEdit").addEventListener("click", resetDebtForm);
+
+  document.getElementById("debtForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var desc = document.getElementById("debtDesc").value.trim();
+    var credor = document.getElementById("debtCredor").value.trim();
+    var valorTotal = parseValor(document.getElementById("debtValorTotal").value);
+    var parcelas = parseInt(document.getElementById("debtParcelas").value, 10);
+    var inicio = document.getElementById("debtInicio").value;
+    if (!desc || isNaN(valorTotal) || valorTotal <= 0 || !parcelas || parcelas <= 0 || !inicio) {
+      showToast("Preencha os campos corretamente.");
+      return;
+    }
+    var valorParcela = Math.round((valorTotal / parcelas) * 100) / 100;
+    if (editingDebtId) {
+      var existing = state.debts.find(function (x) { return x.id === editingDebtId; });
+      if (existing) {
+        existing.descricao = desc; existing.credor = credor; existing.valorTotal = valorTotal;
+        existing.parcelas = parcelas; existing.inicio = inicio; existing.valorParcela = valorParcela;
+      }
+      showToast("Dívida atualizada.");
+    } else {
+      state.debts.push({ id: uid(), descricao: desc, credor: credor, valorTotal: valorTotal, parcelas: parcelas, inicio: inicio, valorParcela: valorParcela });
+      showToast("Dívida adicionada.");
+    }
+    saveState();
+    resetDebtForm();
+    renderAll();
+  });
+
+  function renderDividas() {
+    var list = document.getElementById("debtList");
+    var items = state.debts.slice().sort(function (a, b) { return a.inicio.localeCompare(b.inicio); });
+    list.innerHTML = "";
+    document.getElementById("debtEmpty").style.display = items.length ? "none" : "block";
+    items.forEach(function (d) {
+      var info = debtInfoForMonth(d, viewDate.y, viewDate.m);
+      var pct = info.status === "finalizada" ? 100 : info.status === "futura" ? 0 : Math.round((info.parcelaAtual / d.parcelas) * 100);
+      var statusLabel = info.status === "ativa" ? "Parcela " + info.parcelaAtual + " de " + d.parcelas
+        : info.status === "futura" ? "Começa em " + d.inicio.split("-").reverse().join("/")
+        : "Finalizada (" + d.parcelas + " parcelas)";
+      var li = document.createElement("li");
+      li.innerHTML =
+        '<span class="tx-info" data-editdebt="' + d.id + '">' +
+          '<div class="tx-desc">' + escapeHTML(d.descricao) + (d.credor ? ' <span style="color:var(--text-muted); font-weight:400;">· ' + escapeHTML(d.credor) + '</span>' : '') + '</div>' +
+          '<div class="tx-meta"><span class="debt-status ' + info.status + '">' + statusLabel + '</span> · ' + fmtMoney(d.valorParcela) + '/mês</div>' +
+          '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        '</span>' +
+        '<span class="tx-actions"><button class="icon-btn" data-deldebt="' + d.id + '" title="Excluir">🗑️</button></span>';
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("debtList").addEventListener("click", function (e) {
+    var delBtn = e.target.closest("button[data-deldebt]");
+    if (delBtn) {
+      var id = delBtn.getAttribute("data-deldebt");
+      if (!confirm("Excluir esta dívida?")) return;
+      state.debts = state.debts.filter(function (d) { return d.id !== id; });
+      saveState();
+      if (editingDebtId === id) resetDebtForm();
+      renderAll();
+      showToast("Dívida removida.");
+      return;
+    }
+    var infoEl = e.target.closest("[data-editdebt]");
+    if (infoEl) {
+      var debtId = infoEl.getAttribute("data-editdebt");
+      var d = state.debts.find(function (x) { return x.id === debtId; });
+      if (!d) return;
+      editingDebtId = debtId;
+      document.getElementById("debtDesc").value = d.descricao;
+      document.getElementById("debtCredor").value = d.credor || "";
+      document.getElementById("debtValorTotal").value = d.valorTotal.toFixed(2).replace(".", ",");
+      document.getElementById("debtParcelas").value = d.parcelas;
+      document.getElementById("debtInicio").value = d.inicio;
+      updateDebtPreview();
+      document.getElementById("debtSubmitBtn").textContent = "Salvar alterações";
+      document.getElementById("debtEditBanner").classList.add("show");
+      document.getElementById("debtDesc").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  // ---------- Render: Investimentos ----------
+  (function () {
+    var sel = document.getElementById("investTipo");
+    INVEST_TYPES.forEach(function (t) {
+      var opt = document.createElement("option");
+      opt.value = t.id; opt.textContent = t.label;
+      sel.appendChild(opt);
+    });
+    var d = new Date();
+    document.getElementById("investMes").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  })();
+
+  var editingInvestId = null;
+
+  function resetInvestForm() {
+    editingInvestId = null;
+    document.getElementById("investForm").reset();
+    var d = new Date();
+    document.getElementById("investMes").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    document.getElementById("investSubmitBtn").textContent = "Adicionar aporte";
+    document.getElementById("investEditBanner").classList.remove("show");
+  }
+
+  document.getElementById("investCancelEdit").addEventListener("click", resetInvestForm);
+
+  document.getElementById("investForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var produto = document.getElementById("investProduto").value.trim();
+    var corretora = document.getElementById("investCorretora").value.trim();
+    var tipo = document.getElementById("investTipo").value;
+    var valor = parseValor(document.getElementById("investValor").value);
+    var mes = document.getElementById("investMes").value;
+    if (!produto || isNaN(valor) || valor <= 0 || !mes) {
+      showToast("Preencha os campos corretamente.");
+      return;
+    }
+    if (editingInvestId) {
+      var existing = state.investments.find(function (x) { return x.id === editingInvestId; });
+      if (existing) {
+        existing.produto = produto; existing.corretora = corretora; existing.tipo = tipo;
+        existing.valor = valor; existing.mes = mes;
+      }
+      showToast("Aporte atualizado.");
+    } else {
+      state.investments.push({ id: uid(), produto: produto, corretora: corretora, tipo: tipo, valor: valor, mes: mes });
+      showToast("Aporte adicionado.");
+    }
+    saveState();
+    resetInvestForm();
+    renderAll();
+  });
+
+  function renderInvestimentos() {
+    var all = state.investments || [];
+    var total = all.reduce(function (s, i) { return s + i.valor; }, 0);
+    document.getElementById("investTotal").textContent = fmtMoney(total);
+
+    var byType = {};
+    all.forEach(function (i) { byType[i.tipo] = (byType[i.tipo] || 0) + i.valor; });
+    var breakdown = document.getElementById("investBreakdown");
+    var typeEntries = Object.keys(byType).sort(function (a, b) { return byType[b] - byType[a]; });
+    breakdown.innerHTML = typeEntries.map(function (id) {
+      var pct = total > 0 ? (byType[id] / total) * 100 : 0;
+      return '<li><span class="swatch" style="background:' + investColor(id) + '"></span>' +
+        '<span class="name">' + investLabel(id) + '</span>' +
+        '<span class="pct">' + pct.toFixed(0) + '%</span>' +
+        '<span class="amt">' + fmtMoney(byType[id]) + '</span></li>';
+    }).join("");
+    document.getElementById("investBreakdownEmpty").style.display = all.length ? "none" : "block";
+
+    var list = document.getElementById("investList");
+    var sorted = all.slice().sort(function (a, b) { return b.mes.localeCompare(a.mes); });
+    list.innerHTML = "";
+    document.getElementById("investEmpty").style.display = sorted.length ? "none" : "block";
+    sorted.forEach(function (i) {
+      var li = document.createElement("li");
+      var mesFmt = i.mes.split("-").reverse().join("/");
+      li.innerHTML =
+        '<span class="tx-dot" style="background:' + investColor(i.tipo) + '"></span>' +
+        '<span class="tx-info" data-editinvest="' + i.id + '"><div class="tx-desc">' + escapeHTML(i.produto) + (i.corretora ? ' <span style="color:var(--text-muted); font-weight:400;">· ' + escapeHTML(i.corretora) + '</span>' : '') + '</div>' +
+        '<div class="tx-meta">' + investLabel(i.tipo) + " · " + mesFmt + '</div></span>' +
+        '<span class="tx-value">' + fmtMoney(i.valor) + '</span>' +
+        '<span class="tx-actions"><button class="icon-btn" data-delinvest="' + i.id + '" title="Excluir">🗑️</button></span>';
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("investList").addEventListener("click", function (e) {
+    var delBtn = e.target.closest("button[data-delinvest]");
+    if (delBtn) {
+      var id = delBtn.getAttribute("data-delinvest");
+      if (!confirm("Excluir este aporte?")) return;
+      state.investments = state.investments.filter(function (i) { return i.id !== id; });
+      saveState();
+      if (editingInvestId === id) resetInvestForm();
+      renderAll();
+      showToast("Aporte removido.");
+      return;
+    }
+    var infoEl = e.target.closest("[data-editinvest]");
+    if (infoEl) {
+      var investId = infoEl.getAttribute("data-editinvest");
+      var i = state.investments.find(function (x) { return x.id === investId; });
+      if (!i) return;
+      editingInvestId = investId;
+      document.getElementById("investProduto").value = i.produto;
+      document.getElementById("investCorretora").value = i.corretora || "";
+      document.getElementById("investTipo").value = i.tipo;
+      document.getElementById("investValor").value = i.valor.toFixed(2).replace(".", ",");
+      document.getElementById("investMes").value = i.mes;
+      document.getElementById("investSubmitBtn").textContent = "Salvar alterações";
+      document.getElementById("investEditBanner").classList.add("show");
+      document.getElementById("investProduto").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  // ---------- Render: Categorias ----------
+  document.getElementById("catColor").value = nextSuggestedColor();
+
+  document.getElementById("catForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var label = document.getElementById("catLabel").value.trim();
+    var color = document.getElementById("catColor").value;
+    if (!label) {
+      showToast("Digite um nome para a categoria.");
+      return;
+    }
+    var allIds = getAllCategories().map(function (c) { return c.id; });
+    var base = slugify(label);
+    var id = base, n = 2;
+    while (allIds.indexOf(id) !== -1) { id = base + "-" + n; n++; }
+    state.categories.push({ id: id, label: label, color: color });
+    saveState();
+    this.reset();
+    document.getElementById("catColor").value = nextSuggestedColor();
+    refreshCategorySelects();
+    renderCategorias();
+    showToast("Categoria criada.");
+  });
+
+  function renderCategorias() {
+    var defList = document.getElementById("defaultCatList");
+    defList.innerHTML = DEFAULT_CATEGORIES.map(function (c) {
+      return '<li><span class="tx-dot" style="background:var(--c-' + c.id + ')"></span>' +
+        '<span class="tx-info"><div class="tx-desc">' + escapeHTML(c.label) + '</div></span></li>';
+    }).join("");
+
+    var customs = state.categories || [];
+    var custList = document.getElementById("customCatList");
+    custList.innerHTML = customs.map(function (c) {
+      return '<li><span class="tx-dot" style="background:' + c.color + '"></span>' +
+        '<span class="tx-info"><div class="tx-desc">' + escapeHTML(c.label) + '</div></span>' +
+        '<span class="tx-actions"><button class="icon-btn" data-delcat="' + c.id + '" title="Excluir">🗑️</button></span></li>';
+    }).join("");
+    document.getElementById("customCatEmpty").style.display = customs.length ? "none" : "block";
+  }
+
+  document.getElementById("customCatList").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-delcat]");
+    if (!btn) return;
+    var id = btn.getAttribute("data-delcat");
+    var inUse = state.transactions.filter(function (t) { return t.categoria === id; }).length +
+      state.fixed.filter(function (f) { return f.categoria === id; }).length;
+    var msg = inUse > 0
+      ? "Essa categoria está em uso em " + inUse + " lançamento(s). Eles passarão a aparecer como \"Outros\". Excluir mesmo assim?"
+      : "Excluir esta categoria?";
+    if (!confirm(msg)) return;
+    state.categories = state.categories.filter(function (c) { return c.id !== id; });
+    saveState();
+    refreshCategorySelects();
+    renderCategorias();
+    showToast("Categoria excluída.");
+  });
+
+  // ---------- Sync UI ----------
+  function renderBackup() {
+    var cfg = getSyncConfig();
+    document.getElementById("syncUrl").value = cfg ? cfg.url : "";
+    document.getElementById("syncSecret").value = cfg ? cfg.secret : "";
+    setSyncStatus(syncConfigSummary());
+  }
+
+  document.getElementById("syncForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var url = document.getElementById("syncUrl").value.trim();
+    var secret = document.getElementById("syncSecret").value.trim();
+    if (!url || !secret) {
+      showToast("Preencha a URL e a senha.");
+      return;
+    }
+    saveSyncConfig({ url: url, secret: secret, lastSync: null });
+    showToast("Configuração salva. Sincronizando...");
+    pullFromCloud(true);
+  });
+
+  document.getElementById("syncNowBtn").addEventListener("click", function () {
+    if (!getSyncConfig()) {
+      showToast("Configure a sincronização primeiro.");
+      return;
+    }
+    pullFromCloud(true);
+  });
+
+  document.getElementById("syncOffBtn").addEventListener("click", function () {
+    if (!getSyncConfig()) return;
+    if (!confirm("Desligar a sincronização? Os dados continuam salvos neste aparelho, mas deixam de ser enviados/recebidos da nuvem.")) return;
+    clearSyncConfig();
+    renderBackup();
+    showToast("Sincronização desligada.");
+  });
+
+  // ---------- Backup ----------
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = "backup-financas-" + stamp + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("Backup exportado.");
+  });
+
+  document.getElementById("importBtn").addEventListener("click", function () {
+    document.getElementById("importFile").click();
+  });
+
+  document.getElementById("importFile").addEventListener("change", function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var parsed = JSON.parse(reader.result);
+        if (!Array.isArray(parsed.transactions) || !Array.isArray(parsed.fixed)) throw new Error("formato inválido");
+        if (!Array.isArray(parsed.categories)) parsed.categories = [];
+        if (!Array.isArray(parsed.debts)) parsed.debts = [];
+        if (!Array.isArray(parsed.investments)) parsed.investments = [];
+        if (!confirm("Importar este backup vai substituir todos os dados atuais. Continuar?")) return;
+        state = parsed;
+        saveState();
+        refreshCategorySelects();
+        renderAll();
+        showToast("Backup importado com sucesso.");
+      } catch (err) {
+        showToast("Arquivo inválido.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Isso vai apagar TODOS os lançamentos, gastos fixos, dívidas, aportes e categorias criadas. Essa ação não pode ser desfeita. Continuar?")) return;
+    state = { transactions: [], fixed: [], categories: [], debts: [], investments: [] };
+    saveState();
+    refreshCategorySelects();
+    renderAll();
+    showToast("Todos os dados foram apagados.");
+  });
+
+  // ---------- Render all ----------
+  function renderAll() {
+    renderMonthLabel();
+    if (currentTab === "resumo") renderResumo();
+    if (currentTab === "lancamentos") renderLancamentos();
+    if (currentTab === "fixos") renderFixos();
+    if (currentTab === "backup") renderBackup();
+    if (currentTab === "dividas") renderDividas();
+    if (currentTab === "investimentos") renderInvestimentos();
+    if (currentTab === "categorias") renderCategorias();
+  }
+
+  renderAll();
+  if (getSyncConfig()) pullFromCloud(false);
+})();
+</script>
+</body>
+</html>
