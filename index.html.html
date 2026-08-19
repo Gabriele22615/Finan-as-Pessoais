@@ -31,6 +31,7 @@
     --c-educacao:     #4a3aa7;
     --c-assinaturas:  #e34948;
     --c-outros:       #898781;
+    --c-dividas:      #8a5a44;
   }
   :root[data-theme="dark"], :root:where(:not([data-theme="light"])) {
     @media (prefers-color-scheme: dark) {
@@ -59,6 +60,7 @@
     --c-educacao:     #9085e9;
     --c-assinaturas:  #e66767;
     --c-outros:       #898781;
+    --c-dividas:      #c9906f;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -83,6 +85,7 @@
       --c-educacao:     #9085e9;
       --c-assinaturas:  #e66767;
       --c-outros:       #898781;
+      --c-dividas:      #c9906f;
     }
   }
 
@@ -94,16 +97,23 @@
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
-  body { padding-bottom: 84px; }
+  body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
   h1, h2, h3 { margin: 0 0 4px; font-weight: 600; }
   p { margin: 0; }
   button { font-family: inherit; }
 
-  header.app-header {
+  .topbar {
     position: sticky; top: 0; z-index: 20;
     background: var(--surface);
+  }
+  header.app-header {
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 14px 16px 10px;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) 10px calc(16px + env(safe-area-inset-left, 0px));
   }
   .header-row {
     display: flex; align-items: center; justify-content: space-between;
@@ -125,10 +135,11 @@
   .month-label { font-size: 15px; font-weight: 600; min-width: 150px; text-align: center; }
 
   nav.tabs {
-    position: sticky; top: 92px; z-index: 19;
     display: flex; background: var(--surface);
     border-bottom: 1px solid var(--border);
     overflow-x: auto;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
   nav.tabs button {
     flex: 1; padding: 11px 6px; background: none; border: none;
@@ -137,7 +148,10 @@
   }
   nav.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  main { padding: 16px; max-width: 640px; margin: 0 auto; }
+  main {
+    padding: 16px calc(16px + env(safe-area-inset-right, 0px)) 16px calc(16px + env(safe-area-inset-left, 0px));
+    max-width: 640px; margin: 0 auto;
+  }
   .view { display: none; }
   .view.active { display: block; }
 
@@ -187,12 +201,13 @@
 
   form.entry-form { display: flex; flex-direction: column; gap: 10px; }
   .form-row { display: flex; gap: 10px; }
-  .form-row > * { flex: 1; }
-  label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-secondary); }
+  .form-row > * { flex: 1; min-width: 0; }
+  label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-secondary); min-width: 0; }
   input, select {
     font-family: inherit; font-size: 15px; padding: 9px 10px;
     border: 1px solid var(--border); border-radius: 8px;
     background: var(--surface); color: var(--text-primary);
+    width: 100%; min-width: 0; max-width: 100%;
   }
   .segmented { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .segmented button {
@@ -292,7 +307,7 @@
   .delta-badge.zero { background: var(--gridline); color: var(--text-muted); }
 
   .toast {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    position: fixed; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
     background: var(--text-primary); color: var(--page);
     padding: 10px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
     opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 50;
@@ -302,27 +317,29 @@
 </head>
 <body>
 
-<header class="app-header">
-  <div class="header-row">
-    <h1 class="app-title">💰 Minhas Finanças</h1>
-    <button class="theme-btn" id="themeBtn" title="Alternar tema">🌓</button>
-  </div>
-  <div class="month-nav">
-    <button id="prevMonth">‹</button>
-    <div class="month-label" id="monthLabel">agosto de 2026</div>
-    <button id="nextMonth">›</button>
-  </div>
-</header>
+<div class="topbar">
+  <header class="app-header">
+    <div class="header-row">
+      <h1 class="app-title">💰 Minhas Finanças</h1>
+      <button class="theme-btn" id="themeBtn" title="Alternar tema">🌓</button>
+    </div>
+    <div class="month-nav">
+      <button id="prevMonth">‹</button>
+      <div class="month-label" id="monthLabel">agosto de 2026</div>
+      <button id="nextMonth">›</button>
+    </div>
+  </header>
 
-<nav class="tabs">
-  <button data-view="resumo" class="active">Resumo</button>
-  <button data-view="lancamentos">Lançamentos</button>
-  <button data-view="fixos">Gastos Fixos</button>
-  <button data-view="dividas">Dívidas</button>
-  <button data-view="investimentos">Investimentos</button>
-  <button data-view="categorias">Categorias</button>
-  <button data-view="backup">Backup</button>
-</nav>
+  <nav class="tabs">
+    <button data-view="resumo" class="active">Resumo</button>
+    <button data-view="lancamentos">Lançamentos</button>
+    <button data-view="fixos">Gastos Fixos</button>
+    <button data-view="dividas">Dívidas</button>
+    <button data-view="investimentos">Investimentos</button>
+    <button data-view="categorias">Categorias</button>
+    <button data-view="backup">Backup</button>
+  </nav>
+</div>
 
 <main>
 
@@ -453,6 +470,9 @@
         </label>
         <label class="field">Para quem devendo (opcional)
           <input type="text" id="debtCredor" placeholder="Ex: Nubank, Banco X...">
+        </label>
+        <label class="field">Categoria
+          <select id="debtCategoria"></select>
         </label>
         <div class="form-row">
           <label class="field">Valor total (R$)
@@ -659,6 +679,7 @@
   ];
   var DEFAULT_CAT_IDS = DEFAULT_CATEGORIES.map(function (c) { return c.id; });
   var EXTRA_COLOR_POOL = ["#6b5b95", "#b5651d", "#2f6f6f", "#9b2d54", "#4c6b1f", "#8e5a2f", "#0d7377", "#a4243b"];
+  var DIVIDAS_CAT_ID = "__dividas__"; // pseudo-categoria: dívidas não têm categoria própria, mas entram no gráfico como gasto
 
   function getAllCategories() {
     return DEFAULT_CATEGORIES.concat(Array.isArray(state.categories) ? state.categories : []);
@@ -667,10 +688,12 @@
     return getAllCategories().find(function (c) { return c.id === id; });
   }
   function catLabel(id) {
+    if (id === DIVIDAS_CAT_ID) return "Dívidas";
     var c = findCategory(id);
     return c ? c.label : "Outros";
   }
   function categoryColor(id) {
+    if (id === DIVIDAS_CAT_ID) return "var(--c-dividas)";
     if (DEFAULT_CAT_IDS.indexOf(id) !== -1) return "var(--c-" + id + ")";
     var c = findCategory(id);
     return (c && c.color) ? c.color : "var(--c-outros)";
@@ -822,6 +845,7 @@
         if (!Array.isArray(remote.categories)) remote.categories = [];
         if (!Array.isArray(remote.debts)) remote.debts = [];
         if (!Array.isArray(remote.investments)) remote.investments = [];
+        if (!Array.isArray(remote.investmentUpdates)) remote.investmentUpdates = [];
         state = remote;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         cfg.lastSync = Date.now();
@@ -942,6 +966,7 @@
   function refreshCategorySelects() {
     fillCategorySelect(document.getElementById("txCategoria"));
     fillCategorySelect(document.getElementById("fxCategoria"));
+    fillCategorySelect(document.getElementById("debtCategoria"));
   }
   refreshCategorySelects();
 
@@ -967,6 +992,10 @@
     fixed.forEach(function (f) { byCategory[f.categoria] = (byCategory[f.categoria] || 0) + f.valor; });
     txs.filter(function (t) { return t.tipo === "variavel"; }).forEach(function (t) {
       byCategory[t.categoria] = (byCategory[t.categoria] || 0) + t.valor;
+    });
+    debts.forEach(function (d) {
+      var cid = d.categoria || DIVIDAS_CAT_ID;
+      byCategory[cid] = (byCategory[cid] || 0) + d.valorParcela;
     });
     return { totalFixo: totalFixo, totalReceita: totalReceita, totalVariavel: totalVariavel, totalDividas: totalDividas, saldo: saldo, byCategory: byCategory };
   }
@@ -996,7 +1025,8 @@
       .filter(function (e) { return e.valor > 0; })
       .sort(function (a, b) {
         var all = getAllCategories().map(function (c) { return c.id; });
-        return all.indexOf(a.id) - all.indexOf(b.id);
+        var idx = function (id) { var i = all.indexOf(id); return i === -1 ? all.length : i; };
+        return idx(a.id) - idx(b.id);
       });
     var total = entries.reduce(function (s, e) { return s + e.valor; }, 0);
 
@@ -1106,7 +1136,7 @@
     } else if (kind === "dividas") {
       var debts = activeDebtsForMonth(viewDate.y, viewDate.m);
       var items4 = debts.map(function (d) {
-        return { descricao: d.descricao, valor: d.valorParcela, meta: "Parcela " + d.parcelaAtual + " de " + d.parcelas + (d.credor ? " · " + d.credor : ""), dot: "var(--c-outros)", sinal: "-" };
+        return { descricao: d.descricao, valor: d.valorParcela, meta: "Parcela " + d.parcelaAtual + " de " + d.parcelas + (d.credor ? " · " + d.credor : ""), dot: "var(--c-dividas)", sinal: "-" };
       });
       openDetail("Dívidas — " + monthLabelText(), items4);
     }
@@ -1115,10 +1145,13 @@
   function detailForCategory(catId) {
     var fixed = activeFixedForMonth(viewDate.y, viewDate.m).filter(function (f) { return f.categoria === catId; });
     var txs = transactionsForMonth(viewDate.y, viewDate.m).filter(function (t) { return t.tipo === "variavel" && t.categoria === catId; });
+    var debts = activeDebtsForMonth(viewDate.y, viewDate.m).filter(function (d) { return (d.categoria || DIVIDAS_CAT_ID) === catId; });
     var items = fixed.map(function (f) {
       return { descricao: f.descricao, valor: f.valor, meta: "Gasto fixo", dot: categoryColor(catId), sinal: "-" };
     }).concat(txs.map(function (t) {
       return { descricao: t.descricao, valor: t.valor, meta: t.data.split("-").reverse().slice(0, 2).join("/"), dot: categoryColor(catId), sinal: "-" };
+    })).concat(debts.map(function (d) {
+      return { descricao: d.descricao, valor: d.valorParcela, meta: "Parcela " + d.parcelaAtual + " de " + d.parcelas + (d.credor ? " · " + d.credor : "") + " · Dívida", dot: categoryColor(catId), sinal: "-" };
     }));
     openDetail(catLabel(catId) + " — " + monthLabelText(), items);
   }
@@ -1135,7 +1168,9 @@
   document.getElementById("chartArea").addEventListener("click", function (e) {
     var li = e.target.closest("li[data-cat]");
     if (!li) return;
-    detailForCategory(li.getAttribute("data-cat"));
+    var catId = li.getAttribute("data-cat");
+    if (catId === DIVIDAS_CAT_ID) { detailForCard("dividas"); return; }
+    detailForCategory(catId);
   });
 
   // ---------- Render: Lançamentos ----------
@@ -1351,6 +1386,7 @@
   (function () {
     var d = new Date();
     document.getElementById("debtInicio").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    document.getElementById("debtCategoria").value = "outros";
   })();
 
   var editingDebtId = null;
@@ -1373,6 +1409,7 @@
     document.getElementById("debtForm").reset();
     var d = new Date();
     document.getElementById("debtInicio").value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    document.getElementById("debtCategoria").value = "outros";
     document.getElementById("debtSubmitBtn").textContent = "Adicionar dívida";
     document.getElementById("debtEditBanner").classList.remove("show");
     document.getElementById("debtPreview").textContent = "";
@@ -1384,6 +1421,7 @@
     e.preventDefault();
     var desc = document.getElementById("debtDesc").value.trim();
     var credor = document.getElementById("debtCredor").value.trim();
+    var categoria = document.getElementById("debtCategoria").value || "outros";
     var valorTotal = parseValor(document.getElementById("debtValorTotal").value);
     var parcelas = parseInt(document.getElementById("debtParcelas").value, 10);
     var inicio = document.getElementById("debtInicio").value;
@@ -1395,12 +1433,12 @@
     if (editingDebtId) {
       var existing = state.debts.find(function (x) { return x.id === editingDebtId; });
       if (existing) {
-        existing.descricao = desc; existing.credor = credor; existing.valorTotal = valorTotal;
+        existing.descricao = desc; existing.credor = credor; existing.categoria = categoria; existing.valorTotal = valorTotal;
         existing.parcelas = parcelas; existing.inicio = inicio; existing.valorParcela = valorParcela;
       }
       showToast("Dívida atualizada.");
     } else {
-      state.debts.push({ id: uid(), descricao: desc, credor: credor, valorTotal: valorTotal, parcelas: parcelas, inicio: inicio, valorParcela: valorParcela });
+      state.debts.push({ id: uid(), descricao: desc, credor: credor, categoria: categoria, valorTotal: valorTotal, parcelas: parcelas, inicio: inicio, valorParcela: valorParcela });
       showToast("Dívida adicionada.");
     }
     saveState();
@@ -1419,11 +1457,13 @@
       var statusLabel = info.status === "ativa" ? "Parcela " + info.parcelaAtual + " de " + d.parcelas
         : info.status === "futura" ? "Começa em " + d.inicio.split("-").reverse().join("/")
         : "Finalizada (" + d.parcelas + " parcelas)";
+      var categoria = d.categoria || DIVIDAS_CAT_ID;
       var li = document.createElement("li");
       li.innerHTML =
+        '<span class="tx-dot" style="background:' + categoryColor(categoria) + '"></span>' +
         '<span class="tx-info" data-editdebt="' + d.id + '">' +
           '<div class="tx-desc">' + escapeHTML(d.descricao) + (d.credor ? ' <span style="color:var(--text-muted); font-weight:400;">· ' + escapeHTML(d.credor) + '</span>' : '') + '</div>' +
-          '<div class="tx-meta"><span class="debt-status ' + info.status + '">' + statusLabel + '</span> · ' + fmtMoney(d.valorParcela) + '/mês</div>' +
+          '<div class="tx-meta">' + catLabel(categoria) + ' · <span class="debt-status ' + info.status + '">' + statusLabel + '</span> · ' + fmtMoney(d.valorParcela) + '/mês</div>' +
           '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
         '</span>' +
         '<span class="tx-actions"><button class="icon-btn" data-deldebt="' + d.id + '" title="Excluir">🗑️</button></span>';
@@ -1451,6 +1491,7 @@
       editingDebtId = debtId;
       document.getElementById("debtDesc").value = d.descricao;
       document.getElementById("debtCredor").value = d.credor || "";
+      document.getElementById("debtCategoria").value = d.categoria || "outros";
       document.getElementById("debtValorTotal").value = d.valorTotal.toFixed(2).replace(".", ",");
       document.getElementById("debtParcelas").value = d.parcelas;
       document.getElementById("debtInicio").value = d.inicio;
@@ -1623,7 +1664,7 @@
     if (delBtn) {
       var id = delBtn.getAttribute("data-delupd");
       if (!confirm("Excluir esta atualização?")) return;
-      state.investmentUpdates = state.investmentUpdates.filter(function (u) { return u.id !== id; });
+      state.investmentUpdates = (state.investmentUpdates || []).filter(function (u) { return u.id !== id; });
       saveState();
       if (editingInvestUpdId === id) resetInvestUpdForm();
       renderAll();
@@ -1633,7 +1674,7 @@
     var infoEl = e.target.closest("[data-editupd]");
     if (infoEl) {
       var updId = infoEl.getAttribute("data-editupd");
-      var u = state.investmentUpdates.find(function (x) { return x.id === updId; });
+      var u = (state.investmentUpdates || []).find(function (x) { return x.id === updId; });
       if (!u) return;
       editingInvestUpdId = updId;
       document.getElementById("investUpdProduto").value = u.produto;
@@ -1693,6 +1734,7 @@
       showToast("Preencha os campos corretamente.");
       return;
     }
+    if (!Array.isArray(state.investmentUpdates)) state.investmentUpdates = [];
     var dup = state.investmentUpdates.find(function (u) { return u.produto === produto && u.mes === mes && u.id !== editingInvestUpdId; });
     if (dup && !confirm("Já existe uma atualização para \"" + produto + "\" neste mês. Substituir o valor?")) return;
     if (editingInvestUpdId) {
